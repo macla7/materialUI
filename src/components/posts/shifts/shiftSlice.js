@@ -9,6 +9,8 @@ export const Statuses = {
 };
 
 const initialState = {
+  start: new Date().toString(),
+  end: new Date().toString(),
   shifts: {},
   status: Statuses.Initial,
 };
@@ -25,20 +27,16 @@ export const shiftSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
-      const numOfKeys = Object.keys(state.shifts).length;
-      action.payload.tempId = numOfKeys + 1;
-      state.shifts[numOfKeys + 1] = action.payload;
-      state.status = Statuses.UpToDate;
-    },
-    editShift: (state, action) => {
-      state.shifts[action.payload.tempId] = action.payload;
-      state.status = Statuses.UpToDate;
-    },
-    deleteShift: (state, action) => {
-      state.shifts.filter((shift) => shift.tempId !== action.payload);
+      state.shifts = action.payload;
     },
     resetShifts: (state, action) => {
-      state.shifts = [];
+      state.shifts = {};
+    },
+    setStart: (state, action) => {
+      state.start = action.payload;
+    },
+    setEnd: (state, action) => {
+      state.end = action.payload;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -46,9 +44,19 @@ export const shiftSlice = createSlice({
   extraReducers: (builder) => {},
 });
 
-export const { createShift, deleteShift, resetShifts, editShift } =
-  shiftSlice.actions;
+export const {
+  createShift,
+  deleteShift,
+  resetShifts,
+  editShift,
+  setStart,
+  setEnd,
+} = shiftSlice.actions;
 
-export const selectShifts = (state) => Object.values(state.shifts.shifts);
+export const selectShifts = (state) => state.shifts.shifts;
+
+export const selectStart = (state) => state.shifts.start;
+
+export const selectEnd = (state) => state.shifts.end;
 
 export default shiftSlice.reducer;

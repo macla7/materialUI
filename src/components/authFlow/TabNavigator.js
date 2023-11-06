@@ -248,6 +248,7 @@ function TabNavigator() {
             />
           ),
           title: "Groups",
+          headerTransparent: true,
         }}
       />
       <Tab.Screen
@@ -258,6 +259,7 @@ function TabNavigator() {
             <MaterialCommunityIcons name="plus" color={color} size={26} />
           ),
           title: "Create",
+          headerTransparent: true,
         }}
       />
       <Tab.Screen

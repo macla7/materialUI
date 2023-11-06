@@ -1,9 +1,9 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import PostForm from "./PostForm";
-// import DateTimePicker from "./DateTimePicker";
+import ShiftForm from "./shifts/ShiftForm";
+import TimeAndDateScreen from "./shifts/TimeAndDateScreen";
 // import GroupSearch from "../groups/GroupSearch";
-// import ShiftForm from "./shifts/ShiftForm";
 // import ReserveForm from "./ReserveForm";
 
 const CreatePostStack = createNativeStackNavigator();
@@ -11,7 +11,35 @@ const CreatePostStack = createNativeStackNavigator();
 function CreatePostStackScreen({ navigation }) {
   return (
     <CreatePostStack.Navigator initialRouteName="Create Post">
-      <CreatePostStack.Screen name="Create Post" component={PostForm} />
+      <CreatePostStack.Screen
+        name="Create Post"
+        component={PostForm}
+        initialParams={{
+          postEndsDate: Date.now(),
+          groupId: 0,
+          groupName: "Select Group",
+          description: "",
+          reserve: 0,
+        }}
+        options={{
+          headerTransparent: true,
+        }}
+      />
+      <CreatePostStack.Screen
+        name="Add Shift"
+        component={ShiftForm}
+        options={{
+          headerTransparent: true,
+        }}
+      />
+      <CreatePostStack.Screen
+        name="Time and Date"
+        component={TimeAndDateScreen}
+        options={({ route }) => ({
+          title: route.params.mode,
+          headerTransparent: true,
+        })}
+      />
 
       {/* <CreatePostStack.Screen
         name="Create Post"
