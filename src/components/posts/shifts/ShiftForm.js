@@ -40,6 +40,10 @@ function ShiftForm({ navigation, route }) {
     setTime(currentDate);
   };
 
+  const showMode = () => {
+    setShow(true);
+  };
+
   const onSubmit = () => {
     validate() ? console.log("Submitted") : console.log("Validation Failed");
   };
@@ -160,27 +164,24 @@ function ShiftForm({ navigation, route }) {
               value={description}
               onChangeText={setDescription}
             />
-            {/* <RadioButton.Group
-              onValueChange={(value) => setPosition(value)}
-              value={position}
-            >
-              <RadioButton.Item label="AM" value="0" />
-              <RadioButton.Item label="PM" value="1" />
-              <RadioButton.Item label="Night" value="2" />
-              <RadioButton.Item label="Training" value="3" />
-              <RadioButton.Item label="Custom" value="4" />
-            </RadioButton.Group> */}
 
-            <DateTimePicker
-              textColor="#1f2937"
-              minuteInterval={5}
-              testID="dateTimePicker"
-              value={new Date(start)}
-              mode="date"
-              is24Hour={false}
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={onChange}
-            />
+            {Platform.OS === "ios" ? null : (
+              <Button onPress={showMode}>Pick Date</Button>
+            )}
+
+            {show && (
+              <DateTimePicker
+                textColor="#1f2937"
+                minuteInterval={5}
+                testID="dateTimePicker"
+                value={new Date(start)}
+                mode="date"
+                is24Hour={false}
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={onChange}
+              />
+            )}
+
             <SegmentedButtons
               value={position}
               onValueChange={setPosition}

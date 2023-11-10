@@ -6,6 +6,7 @@ import {
   createUser,
   destroyUser,
   updateUser,
+  fetchCoworkers,
 } from "./userAPI";
 
 export const Statuses = {
@@ -17,6 +18,7 @@ export const Statuses = {
 };
 
 const initialState = {
+  coworkers: [],
   users: [
     {
       id: 0,
@@ -50,6 +52,14 @@ export const fetchUserAsync = createAsyncThunk(
   "users/fetchUser",
   async (userId) => {
     const response = await fetchUser(userId);
+    return response;
+  }
+);
+
+export const fetchCoworkersAsync = createAsyncThunk(
+  "users/fetchCoworkers",
+  async (userId) => {
+    const response = await fetchCoworkers(userId);
     return response;
   }
 );
@@ -123,6 +133,25 @@ export const userSlice = createSlice({
         });
       })
       // while you wait
+      .addCase(fetchCoworkersAsync.pending, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Loading;
+        });
+      })
+      // you got the thing
+      .addCase(fetchCoworkersAsync.fulfilled, (state, action) => {
+        return produce(state, (draftState) => {
+          draftState.coworkers = action.payload;
+          draftState.status = Statuses.UpToDate;
+        });
+      })
+      // error
+      .addCase(fetchCoworkersAsync.rejected, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Error;
+        });
+      })
+      // while you wait
       .addCase(createUserAsync.pending, (state) => {
         return produce(state, (draftState) => {
           draftState.status = Statuses.Loading;
@@ -186,6 +215,8 @@ export const userSlice = createSlice({
 export const {} = userSlice.actions;
 
 export const selectUsers = (state) => state.users.users;
+
+export const selectCoworkers = (state) => state.users.coworkers;
 
 export const selectUser = (state) => state.users.user;
 

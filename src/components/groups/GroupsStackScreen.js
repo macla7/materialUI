@@ -27,6 +27,7 @@ function GroupsStackScreen() {
               size={26}
             />
           ),
+          headerTransparent: true,
         }}
       />
       {/* <GroupsStack.Screen name="Discover" component={DiscoverGroups} /> */}

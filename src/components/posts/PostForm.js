@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  Image,
 } from "react-native";
 import {
   TextInput,
@@ -16,14 +17,18 @@ import {
   SegmentedButtons,
   Button,
   Card,
+  Avatar,
 } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { addDays } from "date-fns";
 import { useTheme } from "react-native-paper";
+import { selectUserAvatarUrl } from "../sessions/sessionSlice";
 
 function PostForm({ route, navigation }) {
   const dispatch = useDispatch();
+  const { members_attributes, shifts_attributes } = route.params;
   const shifts = useSelector(selectShifts);
+  const userAvatarUrl = useSelector(selectUserAvatarUrl);
   const [description, setDescription] = useState("");
   const [value, setValue] = React.useState("");
   const [errors, setErrors] = useState({});
@@ -44,6 +49,12 @@ function PostForm({ route, navigation }) {
       dispatch(resetShifts());
     }
   }, [freshPost.id]);
+
+  useEffect(() => {
+    console.log("whhhaaaaaaaaaaaa");
+    console.log(shifts.description);
+    console.log(userAvatarUrl);
+  });
 
   // useEffect(() => {
   //   dispatch(resetShifts());
@@ -68,15 +79,22 @@ function PostForm({ route, navigation }) {
   };
 
   function submitPost() {
+    console.log("making POSTTTTTTTTT");
     let post = {
       body: description,
       group_id: groupId,
       shifts_attributes: shifts,
+      solution: 0,
+      group_id_attributes: {
+        temporary: true,
+      },
+      members_attributes: [],
     };
+    console.log(post);
     navigation.navigate({
       name: "Home",
     });
-    dispatch(createPostAsync(post));
+    // dispatch(createPostAsync(post));
     return true;
   }
 
@@ -123,11 +141,48 @@ function PostForm({ route, navigation }) {
   }
 
   const shiftsColors = {
-    1: { key: "PM", color: theme.colors.customBlueContainer },
-    0: { key: "AM", color: theme.colors.customOrangeContainer },
-    2: { key: "Night", color: theme.colors.customPurpleContainer },
+    1: {
+      key: "PM",
+      container: theme.colors.customBlueContainer,
+      color: theme.colors.customBlue,
+    },
+    0: {
+      key: "AM",
+      container: theme.colors.customOrangeContainer,
+      color: theme.colors.customOrange,
+    },
+    2: {
+      key: "Night",
+      container: theme.colors.customPurpleContainer,
+      color: theme.colors.customPurple,
+    },
     5: { key: "personal", color: "black" },
   };
+
+  const LeftContent = (source) => (
+    <Avatar.Image
+      source={() => (
+        <Image
+          source={{ uri: source }}
+          style={{
+            width: 40,
+            height: 40,
+          }} // Set the width and height of the image
+        />
+      )}
+      size={48}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        shadowRadius: "5",
+        shadowColor: theme.colors.shadow,
+        shadowOffset: "1 1",
+        shadowOpacity: 0.1,
+        backgroundColor: "white",
+      }}
+    />
+  );
 
   return (
     <KeyboardAvoidingView
@@ -170,28 +225,29 @@ function PostForm({ route, navigation }) {
               style={{ marginTop: 25 }}
             />
 
-            {shifts.description !== undefined > 0 ? (
+            {shifts.description !== undefined ? (
               <Card
                 style={{
                   marginTop: 25,
-                  backgroundColor: shiftsColors[shifts.position].color,
+                  backgroundColor: shiftsColors[shifts.position].container,
                 }}
               >
-                {/* <Card.Title
-                title=""
-                subtitle=""
-                // left={LeftContent}
-              /> */}
-                <Card.Content>
-                  <Text variant="titleLarge">
-                    {shiftPosition(shifts.position)}
-                  </Text>
-                  <Text variant="bodyMedium">{shifts.description}</Text>
-                </Card.Content>
+                <Card.Title
+                  title={shiftPosition(shifts.position)}
+                  subtitle={shifts.description}
+                  titleVariant="titleLarge"
+                  subtitleVariant="bodyMedium"
+                  left={() => LeftContent(userAvatarUrl)}
+                />
+                {/* <Card.Content></Card.Content> */}
                 {/* <Card.Cover source={{ uri: "https://picsum.photos/700" }} /> */}
                 <Card.Actions>
-                  <Button>Edit</Button>
-                  <Button>Delete</Button>
+                  <Button textColor={shiftsColors[shifts.position].color}>
+                    Edit
+                  </Button>
+                  <Button buttonColor={shiftsColors[shifts.position].color}>
+                    Delete
+                  </Button>
                 </Card.Actions>
               </Card>
             ) : null}
@@ -212,6 +268,17 @@ function PostForm({ route, navigation }) {
               style={{ marginTop: 25 }}
             >
               Create Shift
+            </Button>
+            <Button
+              icon="calendar"
+              mode="contained-tonal"
+              onPress={() => {
+                navigation.navigate("Share To", {});
+                setErrors({ ...errors, shifts: null });
+              }}
+              style={{ marginTop: 25 }}
+            >
+              Share to
             </Button>
             <Text style={{ marginTop: 25 }}>
               next screen is the groups/people select

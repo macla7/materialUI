@@ -28,6 +28,16 @@ const initialState = {
       user: { avatar_url: "" },
     },
   ],
+  prospectiveMemberships: [
+    {
+      id: 0,
+      user_id: 0,
+      group_id: 0,
+      role: 0,
+      status: true,
+      user: { avatar_url: "" },
+    },
+  ],
   status: Statuses.Initial,
 };
 
@@ -87,6 +97,13 @@ export const membershipSlice = createSlice({
       } else {
         state.isAdmin = false;
       }
+    },
+    createProspectiveMemberships: (state, action) => {
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the Immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      state.prospectiveMemberships = action.payload;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -176,7 +193,8 @@ export const membershipSlice = createSlice({
 export const { isUserAnAdmin, isUserAMember } = membershipSlice.actions;
 
 export const selectMemberships = (state) => state.memberships.memberships;
-
+export const selectProspectiveMemberships = (state) =>
+  state.memberships.prospectiveMemberships;
 export const selectStatus = (state) => state.memberships.status;
 export const selectIsMember = (state) => state.memberships.isMember;
 export const selectIsAdmin = (state) => state.memberships.isAdmin;

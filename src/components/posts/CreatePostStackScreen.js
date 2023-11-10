@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import PostForm from "./PostForm";
 import ShiftForm from "./shifts/ShiftForm";
 import TimeAndDateScreen from "./shifts/TimeAndDateScreen";
+import ShareToScreen from "./ShareToScreen";
 // import GroupSearch from "../groups/GroupSearch";
 // import ReserveForm from "./ReserveForm";
 
@@ -37,6 +38,13 @@ function CreatePostStackScreen({ navigation }) {
         component={TimeAndDateScreen}
         options={({ route }) => ({
           title: route.params.mode,
+          headerTransparent: true,
+        })}
+      />
+      <CreatePostStack.Screen
+        name="Share To"
+        component={ShareToScreen}
+        options={({ route }) => ({
           headerTransparent: true,
         })}
       />

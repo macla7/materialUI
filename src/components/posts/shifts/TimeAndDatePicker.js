@@ -34,6 +34,19 @@ function TimeAndDatePicker({ initDate, shiftTime }) {
     }
   }
 
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+
   return (
     <View>
       {show && (
@@ -52,7 +65,7 @@ function TimeAndDatePicker({ initDate, shiftTime }) {
 
       <SegmentedButtons
         value={mode}
-        onValueChange={(value) => setMode(value)}
+        onValueChange={(value) => showMode(value)}
         buttons={[
           {
             value: "date",

@@ -20,6 +20,23 @@ export async function fetchUsers(groupId) {
     });
 }
 
+export async function fetchCoworkers(userId) {
+  const auth_token = await getValueFor("auth_token");
+  return fetch(`${API_URL}/users/${userId}/coworkers2.json`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth_token}`,
+    },
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      console.log("Error: ", error);
+      // Not a longer term proper soloution
+      return {};
+    });
+}
+
 export async function fetchUser(userId) {
   const auth_token = await getValueFor("auth_token");
   return fetch(`${API_URL}/users/${userId}.json`, {
