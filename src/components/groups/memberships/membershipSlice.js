@@ -103,6 +103,8 @@ export const membershipSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
+      console.log("are we making the prospective memberships?????");
+      console.log(action.payload);
       state.prospectiveMemberships = action.payload;
     },
   },
@@ -190,7 +192,8 @@ export const membershipSlice = createSlice({
   },
 });
 
-export const { isUserAnAdmin, isUserAMember } = membershipSlice.actions;
+export const { isUserAnAdmin, isUserAMember, createProspectiveMemberships } =
+  membershipSlice.actions;
 
 export const selectMemberships = (state) => state.memberships.memberships;
 export const selectProspectiveMemberships = (state) =>

@@ -62,7 +62,7 @@ export async function createPost(post) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${auth_token}`,
     },
-    body: JSON.stringify({ post }),
+    body: JSON.stringify(post),
   })
     .then((response) => response.json())
     .catch((error) => {

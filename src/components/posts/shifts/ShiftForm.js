@@ -99,13 +99,13 @@ function ShiftForm({ navigation, route }) {
 
   function setTime(currentDate) {
     switch (position) {
-      case "0":
+      case 0:
         return setAM(currentDate);
-      case "1":
+      case 1:
         return setPM(currentDate);
-      case "2":
+      case 2:
         return setNight(currentDate);
-      case "3":
+      case 3:
         return setCustom(currentDate);
       default:
         return setCustom(currentDate);
@@ -187,22 +187,22 @@ function ShiftForm({ navigation, route }) {
               onValueChange={setPosition}
               buttons={[
                 {
-                  value: "0",
+                  value: 0,
                   label: "AM",
                   onPress: () => setAM(new Date(start)),
                 },
                 {
-                  value: "1",
+                  value: 1,
                   label: "PM",
                   onPress: () => setPM(new Date(start)),
                 },
                 {
-                  value: "2",
+                  value: 2,
                   label: "Night",
                   onPress: () => setNight(new Date(start)),
                 },
                 {
-                  value: "3",
+                  value: 3,
                   label: "Custom",
                   onPress: () => {
                     navigation.navigate("Time and Date", {

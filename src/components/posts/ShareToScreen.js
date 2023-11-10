@@ -51,7 +51,7 @@ function ShareToScreen({ route, navigation }) {
   const [expanded, setExpanded] = React.useState(true);
   const [expanded2, setExpanded2] = React.useState(true);
   const [checkboxGroupState, setCheckboxGroupState] = useState(
-    getStartingCheckboxState(myGroups)
+    extractIdsAndAdd(myGroups, [])
   );
   const [checkboxUserState, setCheckboxUserState] = useState({});
   const [filteredUser, setFilteredUser] = useState([]);
@@ -68,12 +68,12 @@ function ShareToScreen({ route, navigation }) {
   useEffect(() => {
     console.log("useEffect called");
     setFilteredUser(coworkers);
-    setCheckboxUserState(getStartingCheckboxState(coworkers));
+    setCheckboxUserState(extractIdsAndAdd(coworkers, []));
   }, [coworkers]);
 
   useEffect(() => {
     console.log("useEffect called heere");
-    setFilteredUser(filterUsersByCheckedGroups(coworkers, checkboxGroupState));
+    setFilteredUser(filterUsersById(coworkers, checkboxGroupState));
   }, [checkboxGroupState]);
 
   useEffect(() => {
@@ -84,100 +84,124 @@ function ShareToScreen({ route, navigation }) {
     console.log("helllllllooooooooooooooooo");
     console.log(selectAllUsers);
     if (!selectAllUsers) {
-      setCheckboxUserState({
-        ...checkboxUserState,
-        ...getStartingCheckboxState(filteredUser, "checked"),
-      });
+      setCheckboxUserState(extractIdsAndAdd(filteredUser, checkboxUserState));
     } else {
-      setCheckboxUserState({
-        ...checkboxUserState,
-        ...getStartingCheckboxState(filteredUser, "unchecked"),
-      });
+      setCheckboxUserState(removeIdsFromArray(checkboxUserState, filteredUser));
     }
     console.log("BIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+    console.log(checkboxUserState);
     setSelectAllUsers(!selectAllUsers);
   }
 
   function selectAllGroupsChecked() {
     console.log(selectAllGroups);
     if (!selectAllGroups) {
-      setCheckboxGroupState({
-        ...checkboxGroupState,
-        ...getStartingCheckboxState(myGroups, "checked"),
-      });
+      setCheckboxGroupState(extractIdsAndAdd(myGroups, checkboxGroupState));
     } else {
-      setCheckboxGroupState({
-        ...checkboxGroupState,
-        ...getStartingCheckboxState(myGroups, "unchecked"),
-      });
+      setCheckboxGroupState(removeIdsFromArray(checkboxGroupState, myGroups));
     }
     console.log("BIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
     setSelectAllGroups(!selectAllGroups);
   }
 
-  function filterGroups(coworkers, checkboxState) {
-    const filteredObject = Object.fromEntries(
-      Object.keys(coworkers)
-        .filter((key) => checkboxState[key] === "checked")
-        .map((key) => [key, coworkers[key]])
+  function filterUsersById(usersArray, idsToKeep) {
+    // Use the filter method to create a new array containing only the desired users
+    let filteredUsers = usersArray.filter((user) =>
+      idsToKeep.includes(user.id)
     );
-    return filteredObject;
+
+    // Return the array containing the filtered users
+    return filteredUsers;
   }
 
-  function filterUsersByCheckedGroups(users, filterIds) {
-    return users.filter((user) =>
-      user.shared_groups.some((groupId) => filterIds[groupId] === "checked")
-    );
+  function extractIdsAndAdd(arrayOfObjects, existingIdsArray) {
+    // Create an array to store the extracted ids
+    let newStorage = [];
+
+    // Iterate through the array of objects
+    for (let i = 0; i < arrayOfObjects.length; i++) {
+      // Check if the current object has the "id" property
+      if (arrayOfObjects[i].hasOwnProperty("id")) {
+        // Push the "id" value to the newStorage array
+        newStorage.push(arrayOfObjects[i].id);
+      }
+    }
+
+    // Add the new ids to the existing array of ids
+    let updatedIdsArray = existingIdsArray.concat(newStorage);
+
+    // Return the updated array containing the existing and new ids
+    return updatedIdsArray;
   }
 
-  // function getUniqueUsers(coworkers) {
-  //   const filteredUser = {};
+  function removeIdsFromArray(idsArray, arrayOfObjects) {
+    // Create a new array to store the remaining ids
+    let remainingIds = [];
 
-  //   Object.values(coworkers).forEach((usersInGroup) => {
-  //     usersInGroup.forEach((user) => {
-  //       // Use the user's ID as a key to check for uniqueness
-  //       if (!filteredUser[user.id]) {
-  //         // If the user's ID is not in 'filteredUser', add the user
-  //         filteredUser[user.id] = user;
-  //       }
-  //     });
-  //   });
+    // Create a set of ids to remove for efficient lookup
+    let idsToRemoveSet = new Set(arrayOfObjects.map((obj) => obj.id));
 
-  //   // Convert the filteredUser object into an array of user objects
-  //   const filteredUserArray = Object.values(filteredUser);
+    // Iterate through the array of ids
+    for (let i = 0; i < idsArray.length; i++) {
+      // Check if the current id is in the set of ids to remove
+      if (!idsToRemoveSet.has(idsArray[i])) {
+        // If not, push the id to the remainingIds array
+        remainingIds.push(idsArray[i]);
+      }
+    }
 
-  //   return filteredUserArray;
-  // }
-
-  function getStartingCheckboxState(myGroups, status = "unchecked") {
-    const resultObject = myGroups.reduce((result, item) => {
-      result[item.id] = status;
-      return result;
-    }, {});
-    return resultObject;
+    // Return the array containing the remaining ids
+    return remainingIds;
   }
 
   const handlePress = () => setExpanded(!expanded);
 
   function checkboxTouched(id, checkboxObject, arrayType) {
-    let newCheckboxState = {};
-
-    switch (checkboxObject[id]) {
-      case "checked":
-        newCheckboxState[id] = "unchecked";
-        break;
-      case "unchecked":
-        newCheckboxState[id] = "checked";
-        break;
+    if (isIdPresent(id, checkboxObject)) {
+      if (arrayType === "users") {
+        setCheckboxUserState(removeIdFromArray(id, checkboxUserState));
+      } else {
+        setCheckboxGroupState(removeIdFromArray(id, checkboxGroupState)); //
+      }
+    } else {
+      if (arrayType === "users") {
+        setCheckboxUserState(addIdToArray(id, checkboxUserState));
+      } else {
+        setCheckboxGroupState(addIdToArray(id, checkboxGroupState)); //
+      }
     }
 
     console.log("touched");
-    console.log({ ...checkboxObject, ...newCheckboxState });
-    if (arrayType === "users") {
-      setCheckboxUserState({ ...checkboxObject, ...newCheckboxState });
-    } else {
-      setCheckboxGroupState({ ...checkboxObject, ...newCheckboxState });
+  }
+
+  function isIdPresent(idToCheck, idsArray) {
+    // Use the includes method to check if the id is present in the array
+    return idsArray.includes(idToCheck);
+  }
+
+  function removeIdFromArray(idToRemove, idsArray) {
+    // Use the filter method to create a new array without the specified ID
+    let newArray = idsArray.filter((id) => id !== idToRemove);
+
+    // Return the new array without the removed ID
+    return newArray;
+  }
+
+  function addIdToArray(idToAdd, idsArray) {
+    // Check if the ID is not already in the array
+    if (!idsArray.includes(idToAdd)) {
+      // Use the concat method to create a new array with the added ID
+      let newArray = idsArray.concat(idToAdd);
+
+      // Alternatively, you can use the push method to modify the existing array in place:
+      // idsArray.push(idToAdd);
+
+      // Return the new array with the added ID
+      return newArray;
     }
+
+    // If the ID is already in the array, return the original array
+    return idsArray;
   }
 
   const LeftContent = (source) => (
@@ -204,16 +228,6 @@ function ShareToScreen({ route, navigation }) {
       }}
     />
   );
-
-  function checkObject(obj) {
-    for (const key in obj) {
-      if (obj[key] === "unchecked") {
-        return "unchecked";
-      }
-    }
-    console.log("getting hereeee");
-    return "checked";
-  }
 
   return (
     <KeyboardAvoidingView
@@ -259,7 +273,11 @@ function ShareToScreen({ route, navigation }) {
                     }
                     right={(props) => (
                       <Checkbox.Item
-                        status={checkboxGroupState[item.id]}
+                        status={
+                          isIdPresent(item.id, checkboxGroupState)
+                            ? "checked"
+                            : "unchecked"
+                        }
                         mode="android"
                         style={{ height: 20 }}
                       />
@@ -300,7 +318,11 @@ function ShareToScreen({ route, navigation }) {
                   right={(props) => (
                     <View style={{ justifyContent: "center" }}>
                       <Checkbox.Item
-                        status={checkboxUserState[item.id]}
+                        status={
+                          isIdPresent(item.id, checkboxUserState)
+                            ? "checked"
+                            : "unchecked"
+                        }
                         mode="android"
                         style={{ height: 20 }}
                       />
@@ -315,14 +337,13 @@ function ShareToScreen({ route, navigation }) {
       <Button
         mode="contained"
         onPress={() => {
-          dispatch(createProspectiveMemberships());
-          onSubmit();
+          dispatch(createProspectiveMemberships(checkboxUserState));
+          navigation.navigate("Create Post");
         }}
         style={{ marginTop: 25 }}
       >
         Done
       </Button>
-
       {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
   );

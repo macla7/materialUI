@@ -23,11 +23,12 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { addDays } from "date-fns";
 import { useTheme } from "react-native-paper";
 import { selectUserAvatarUrl } from "../sessions/sessionSlice";
+import { selectProspectiveMemberships } from "../groups/memberships/membershipSlice";
 
 function PostForm({ route, navigation }) {
   const dispatch = useDispatch();
-  const { members_attributes, shifts_attributes } = route.params;
   const shifts = useSelector(selectShifts);
+  const prospectiveMemberships = useSelector(selectProspectiveMemberships);
   const userAvatarUrl = useSelector(selectUserAvatarUrl);
   const [description, setDescription] = useState("");
   const [value, setValue] = React.useState("");
@@ -69,7 +70,6 @@ function PostForm({ route, navigation }) {
 
     checkDescriptionForErrors(newErrors);
     checkShiftsForErrors(newErrors);
-    checkGroupForErrors(newErrors);
 
     setErrors({ ...errors, ...newErrors });
 
@@ -82,19 +82,15 @@ function PostForm({ route, navigation }) {
     console.log("making POSTTTTTTTTT");
     let post = {
       body: description,
-      group_id: groupId,
-      shifts_attributes: shifts,
+      shift_attributes: shifts,
       solution: 0,
-      group_id_attributes: {
-        temporary: true,
-      },
-      members_attributes: [],
+      members_attributes: prospectiveMemberships,
     };
     console.log(post);
-    navigation.navigate({
-      name: "Home",
-    });
-    // dispatch(createPostAsync(post));
+    // navigation.navigate({
+    //   name: "Home",
+    // });
+    dispatch(createPostAsync(post));
     return true;
   }
 
@@ -110,12 +106,6 @@ function PostForm({ route, navigation }) {
     }
   };
 
-  const checkGroupForErrors = (newErrors) => {
-    if (groupId === 0) {
-      newErrors["group"] = "Need to pick a group";
-    }
-  };
-
   function areAllValuesNull(obj) {
     for (let key in obj) {
       if (obj.hasOwnProperty(key) && obj[key] !== null) {
@@ -127,13 +117,13 @@ function PostForm({ route, navigation }) {
 
   function shiftPosition(position) {
     switch (position) {
-      case "0":
+      case 0:
         return "AM";
-      case "1":
+      case 1:
         return "PM";
-      case "2":
+      case 2:
         return "Night";
-      case "3":
+      case 3:
         return "Custom";
       default:
         return "no shift position...";
@@ -280,9 +270,15 @@ function PostForm({ route, navigation }) {
             >
               Share to
             </Button>
-            <Text style={{ marginTop: 25 }}>
-              next screen is the groups/people select
-            </Text>
+            <Button
+              mode="contained-tonal"
+              onPress={() => {
+                submitPost();
+              }}
+              style={{ marginTop: 25 }}
+            >
+              Post
+            </Button>
           </ScrollView>
         </View>
       </TouchableWithoutFeedback>
