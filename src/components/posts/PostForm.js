@@ -18,24 +18,36 @@ import {
   Button,
   Card,
   Avatar,
+  HelperText,
+  List,
 } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import { useTheme } from "react-native-paper";
-import { selectUserAvatarUrl } from "../sessions/sessionSlice";
-import { selectProspectiveMemberships } from "../groups/memberships/membershipSlice";
+import { selectUserAvatarUrl, selectUserName } from "../sessions/sessionSlice";
+import {
+  selectCheckboxUserState,
+  selectProspectiveMembershipsObjects,
+} from "../groups/memberships/membershipSlice";
 
 function PostForm({ route, navigation }) {
   const dispatch = useDispatch();
   const shifts = useSelector(selectShifts);
-  const prospectiveMemberships = useSelector(selectProspectiveMemberships);
+  const checkboxUserState = useSelector(selectCheckboxUserState);
+  const prospectiveMembershipsObjects = useSelector(
+    selectProspectiveMembershipsObjects
+  );
   const userAvatarUrl = useSelector(selectUserAvatarUrl);
-  const [description, setDescription] = useState("");
-  const [value, setValue] = React.useState("");
+  const userName = useSelector(selectUserName);
+  const [reason, setReason] = useState("");
+  const [solution, setSolution] = React.useState(0);
   const [errors, setErrors] = useState({});
   const freshPost = useSelector(selectFreshPost);
   const headerHeight = useHeaderHeight();
   const theme = useTheme();
+  const [expanded, setExpanded] = React.useState(true);
+
+  const handlePress = () => setExpanded(!expanded);
 
   useEffect(() => {
     if (freshPost.id != 0) {
@@ -46,20 +58,8 @@ function PostForm({ route, navigation }) {
       };
 
       createNotificationBlueprint(notification_blueprint);
-
-      dispatch(resetShifts());
     }
   }, [freshPost.id]);
-
-  useEffect(() => {
-    console.log("whhhaaaaaaaaaaaa");
-    console.log(shifts.description);
-    console.log(userAvatarUrl);
-  });
-
-  // useEffect(() => {
-  //   dispatch(resetShifts());
-  // }, []);
 
   const onSubmit = () => {
     validate() ? console.log("Submitted") : console.log("Validation Failed");
@@ -68,8 +68,9 @@ function PostForm({ route, navigation }) {
   const validate = () => {
     let newErrors = {};
 
-    checkDescriptionForErrors(newErrors);
+    checkReasonForErrors(newErrors);
     checkShiftsForErrors(newErrors);
+    checkSolutionForErrors(newErrors);
 
     setErrors({ ...errors, ...newErrors });
 
@@ -81,28 +82,37 @@ function PostForm({ route, navigation }) {
   function submitPost() {
     console.log("making POSTTTTTTTTT");
     let post = {
-      body: description,
+      body: reason,
       shift_attributes: shifts,
-      solution: 0,
-      members_attributes: prospectiveMemberships,
+      solution: solution,
+      members_attributes: checkboxUserState,
     };
-    console.log(post);
-    // navigation.navigate({
-    //   name: "Home",
-    // });
     dispatch(createPostAsync(post));
+    dispatch(resetShifts());
+    setReason("");
+    navigation.navigate({
+      name: "Home",
+    });
     return true;
   }
 
-  const checkDescriptionForErrors = (newErrors) => {
-    if (description === "") {
-      newErrors["description"] = "Description required";
+  const checkReasonForErrors = (newErrors) => {
+    if (reason === "") {
+      newErrors["reason"] = "Reason required";
     }
   };
 
   const checkShiftsForErrors = (newErrors) => {
     if (shifts.length === 0) {
       newErrors["shifts"] = "At least one Shift is requried";
+    }
+  };
+
+  const checkSolutionForErrors = (newErrors) => {
+    if (solution < 0 || solution > 3) {
+      newErrors["solution"] = "Please choose the type of Post";
+    } else {
+      return;
     }
   };
 
@@ -115,8 +125,8 @@ function PostForm({ route, navigation }) {
     return true; // All values are null
   }
 
-  function shiftPosition(position) {
-    switch (position) {
+  function shiftPosition(solution) {
+    switch (solution) {
       case 0:
         return "AM";
       case 1:
@@ -126,7 +136,7 @@ function PostForm({ route, navigation }) {
       case 3:
         return "Custom";
       default:
-        return "no shift position...";
+        return "no shift solution...";
     }
   }
 
@@ -146,17 +156,74 @@ function PostForm({ route, navigation }) {
       container: theme.colors.customPurpleContainer,
       color: theme.colors.customPurple,
     },
+    3: {
+      key: "Custom",
+      container: theme.colors.customPinkContainer,
+      color: theme.colors.customPink,
+    },
     5: { key: "personal", color: "black" },
   };
 
+  function nextScreenButton() {
+    if (shifts.length === 0) {
+      return (
+        <Button
+          icon="calendar"
+          mode="contained-tonal"
+          onPress={() => {
+            const currentDate = new Date();
+            navigation.navigate("Add Shift", {
+              initStart: addDays(currentDate, 7).toString(),
+              initEnd: addDays(currentDate, 7).toString(),
+              returnScreen: "Create Post",
+            });
+            dispatch(resetShifts());
+          }}
+          style={{ marginTop: 15 }}
+        >
+          Create Shift
+        </Button>
+      );
+    } else if (checkboxUserState.length === 0) {
+      return (
+        <Button
+          icon="account-group"
+          mode="contained-tonal"
+          onPress={() => {
+            navigation.navigate("Share To", {});
+          }}
+          style={{ marginTop: 15 }}
+        >
+          Share to
+        </Button>
+      );
+    } else {
+      return (
+        <>
+          <Button
+            mode="contained-tonal"
+            onPress={() => {
+              onSubmit();
+            }}
+            style={{ marginTop: 15 }}
+          >
+            Post
+          </Button>
+          <HelperText type="error" visible={!areAllValuesNull(errors)}>
+            Please review form errors above
+          </HelperText>
+        </>
+      );
+    }
+  }
   const LeftContent = (source) => (
     <Avatar.Image
       source={() => (
         <Image
           source={{ uri: source }}
           style={{
-            width: 40,
-            height: 40,
+            width: 30,
+            height: 30,
           }} // Set the width and height of the image
         />
       )}
@@ -179,109 +246,140 @@ function PostForm({ route, navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={{ paddingTop: headerHeight - 5 }}>
-          <ScrollView
-            style={{
-              paddingLeft: 15,
-              paddingRight: 15,
+      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> */}
+      <View
+        style={{
+          paddingTop: headerHeight - 5,
+          flex: 1,
+        }}
+      >
+        <ScrollView
+          style={{
+            paddingLeft: 15,
+            paddingRight: 15,
+          }}
+        >
+          <TextInput
+            label="Reason"
+            multiline
+            mode="outlined"
+            placeholder="Reason for posting the shift"
+            style={{ height: 75, backgroundColor: "white", padding: 0 }}
+            value={reason}
+            onChangeText={(value) => {
+              setErrors({ ...errors, reason: null });
+              setReason(value);
             }}
-          >
-            <TextInput
-              label="Description"
-              multiline
-              mode="outlined"
-              placeholder="Information for shift"
-              style={{ height: 75, backgroundColor: "white", padding: 0 }}
-              value={description}
-              onChangeText={setDescription}
-            />
-            <SegmentedButtons
-              value={value}
-              onValueChange={setValue}
-              buttons={[
-                {
-                  value: "0",
-                  label: "Swap",
-                  icon: "calendar-multiple",
-                },
-                {
-                  value: "1",
-                  label: "Cover",
-                  icon: "calendar-arrow-right",
-                },
-                { value: "2", label: "Either" },
-              ]}
-              style={{ marginTop: 25 }}
-            />
+          />
+          <HelperText type="error" visible={errors.reason !== undefined}>
+            {errors["reason"]}
+          </HelperText>
+          <Text variant="titleSmall" style={{ marginTop: 15 }}>
+            What do you want to do with your shift?
+          </Text>
+          <SegmentedButtons
+            value={solution}
+            onValueChange={(value) => {
+              setErrors({ ...errors, solution: null });
+              setSolution(value);
+            }}
+            buttons={[
+              {
+                value: 0,
+                label: "Swap",
+                icon: "calendar-multiple",
+              },
+              {
+                value: 1,
+                label: "Cover",
+                icon: "calendar-arrow-right",
+              },
+              { value: 2, label: "Either" },
+            ]}
+            style={{ marginTop: 10 }}
+          />
+          <HelperText type="error" visible={errors.solution !== undefined}>
+            {errors["solution"]}
+          </HelperText>
 
-            {shifts.description !== undefined ? (
-              <Card
-                style={{
-                  marginTop: 25,
-                  backgroundColor: shiftsColors[shifts.position].container,
-                }}
+          {shifts.description !== undefined ? (
+            <Card
+              style={{
+                marginTop: 15,
+                backgroundColor: shiftsColors[shifts.position].container,
+              }}
+            >
+              <Card.Title
+                title={
+                  format(new Date(shifts.start), "EEE do LLL") +
+                  " - " +
+                  shiftPosition(shifts.position)
+                }
+                subtitle={userName}
+                titleVariant="titleLarge"
+                subtitleVariant="bodyMedium"
+                left={() => LeftContent(userAvatarUrl)}
+              />
+              <Card.Content>
+                <Text variant="bodyLarge">
+                  {format(new Date(shifts.start), "p") +
+                    " - " +
+                    format(new Date(shifts.end), "p")}
+                </Text>
+                <Text variant="bodyMedium">{shifts.description}</Text>
+              </Card.Content>
+              {/* <Card.Cover source={{ uri: "https://picsum.photos/700" }} /> */}
+              <Card.Actions>
+                <Button
+                  textColor={shiftsColors[shifts.position].color}
+                  onPress={() => {
+                    const currentDate = new Date();
+                    navigation.navigate("Add Shift", {
+                      returnScreen: "Create Post",
+                    });
+                  }}
+                >
+                  Edit
+                </Button>
+                {/* <Button buttonColor={shiftsColors[shifts.position].color}>
+                  Delete
+                </Button> */}
+              </Card.Actions>
+            </Card>
+          ) : null}
+          <HelperText type="error" visible={false}></HelperText>
+
+          {checkboxUserState.length === 0 ? null : (
+            <List.Section title="Share Post To">
+              <List.Accordion
+                title="Coworkers"
+                left={(props) => <List.Icon {...props} icon="account-group" />}
+                expanded={expanded}
+                onPress={handlePress}
               >
-                <Card.Title
-                  title={shiftPosition(shifts.position)}
-                  subtitle={shifts.description}
-                  titleVariant="titleLarge"
-                  subtitleVariant="bodyMedium"
-                  left={() => LeftContent(userAvatarUrl)}
+                <List.Item
+                  title="Edit List"
+                  onPress={() => {
+                    navigation.navigate("Share To", {});
+                  }}
+                  right={(props) => <List.Icon {...props} icon="pencil" />}
                 />
-                {/* <Card.Content></Card.Content> */}
-                {/* <Card.Cover source={{ uri: "https://picsum.photos/700" }} /> */}
-                <Card.Actions>
-                  <Button textColor={shiftsColors[shifts.position].color}>
-                    Edit
-                  </Button>
-                  <Button buttonColor={shiftsColors[shifts.position].color}>
-                    Delete
-                  </Button>
-                </Card.Actions>
-              </Card>
-            ) : null}
-
-            <Button
-              icon="calendar"
-              mode="contained-tonal"
-              onPress={() => {
-                const currentDate = new Date();
-                navigation.navigate("Add Shift", {
-                  initStart: addDays(currentDate, 7).toString(),
-                  initEnd: addDays(currentDate, 7).toString(),
-                  returnScreen: "Create Post",
-                });
-                setErrors({ ...errors, shifts: null });
-                dispatch(resetShifts());
-              }}
-              style={{ marginTop: 25 }}
-            >
-              Create Shift
-            </Button>
-            <Button
-              icon="calendar"
-              mode="contained-tonal"
-              onPress={() => {
-                navigation.navigate("Share To", {});
-                setErrors({ ...errors, shifts: null });
-              }}
-              style={{ marginTop: 25 }}
-            >
-              Share to
-            </Button>
-            <Button
-              mode="contained-tonal"
-              onPress={() => {
-                submitPost();
-              }}
-              style={{ marginTop: 25 }}
-            >
-              Post
-            </Button>
-          </ScrollView>
-        </View>
-      </TouchableWithoutFeedback>
+                {prospectiveMembershipsObjects.map((item, i) => {
+                  return (
+                    <List.Item
+                      key={i}
+                      title={item.name}
+                      left={() => LeftContent(item.avatar_url)}
+                    />
+                  );
+                })}
+              </List.Accordion>
+            </List.Section>
+          )}
+          {nextScreenButton()}
+        </ScrollView>
+      </View>
+      {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
   );
 }

@@ -28,16 +28,9 @@ const initialState = {
       user: { avatar_url: "" },
     },
   ],
-  prospectiveMemberships: [
-    {
-      id: 0,
-      user_id: 0,
-      group_id: 0,
-      role: 0,
-      status: true,
-      user: { avatar_url: "" },
-    },
-  ],
+  checkboxUserState: [],
+  prospectiveMembershipsObjects: [],
+  checkboxGroupState: [],
   status: Statuses.Initial,
 };
 
@@ -98,14 +91,22 @@ export const membershipSlice = createSlice({
         state.isAdmin = false;
       }
     },
-    createProspectiveMemberships: (state, action) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      console.log("are we making the prospective memberships?????");
-      console.log(action.payload);
-      state.prospectiveMemberships = action.payload;
+    setCheckboxUserState: (state, action) => {
+      state.checkboxUserState = action.payload;
+    },
+    setCheckboxGroupState: (state, action) => {
+      state.checkboxGroupState = action.payload;
+    },
+    createProspectiveMembershipsObjects: (state, action) => {
+      console.log("submitting membership objects");
+      console.log(action.payload.length);
+      state.prospectiveMembershipsObjects = action.payload;
+    },
+    resetProspectiveMemberships: (state) => {
+      console.log("are we resting the prospective memberships objects?????");
+      state.checkboxUserState = [];
+      state.prospectiveMembershipsObjects = [];
+      state.checkboxGroupState = [];
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -192,12 +193,21 @@ export const membershipSlice = createSlice({
   },
 });
 
-export const { isUserAnAdmin, isUserAMember, createProspectiveMemberships } =
-  membershipSlice.actions;
+export const {
+  isUserAnAdmin,
+  isUserAMember,
+  setCheckboxUserState,
+  setCheckboxGroupState,
+  createProspectiveMembershipsObjects,
+} = membershipSlice.actions;
 
 export const selectMemberships = (state) => state.memberships.memberships;
-export const selectProspectiveMemberships = (state) =>
-  state.memberships.prospectiveMemberships;
+export const selectCheckboxUserState = (state) =>
+  state.memberships.checkboxUserState;
+export const selectProspectiveMembershipsObjects = (state) =>
+  state.memberships.prospectiveMembershipsObjects;
+export const selectCheckboxGroupState = (state) =>
+  state.memberships.checkboxGroupState;
 export const selectStatus = (state) => state.memberships.status;
 export const selectIsMember = (state) => state.memberships.isMember;
 export const selectIsAdmin = (state) => state.memberships.isAdmin;

@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createPostAsync, selectFreshPost } from "./postSlice";
-import { resetShifts, selectShifts } from "./shifts/shiftSlice";
-import { createNotificationBlueprint } from "../notifications/notificationBlueprintAPI";
 import {
   View,
   KeyboardAvoidingView,
@@ -12,27 +9,24 @@ import {
   Image,
 } from "react-native";
 import {
-  TextInput,
-  Text,
-  SegmentedButtons,
   Button,
-  Card,
   Avatar,
-  Switch,
   List,
   Checkbox,
-  RadioButton,
+  Chip,
+  Divider,
 } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { addDays } from "date-fns";
 import { useTheme } from "react-native-paper";
-import { selectUserAvatarUrl } from "../sessions/sessionSlice";
 import { selectCoworkers, fetchCoworkersAsync } from "../users/userSlice";
 import { selectUserId } from "../sessions/sessionSlice";
 import { fetchMyGroupsAsync, selectMyGroups } from "../groups/groupSlice";
 import {
-  createProspectiveMemberships,
-  selectProspectiveMemberships,
+  setCheckboxUserState,
+  createProspectiveMembershipsObjects,
+  selectCheckboxUserState,
+  selectCheckboxGroupState,
+  setCheckboxGroupState,
 } from "../groups/memberships/membershipSlice";
 
 function ShareToScreen({ route, navigation }) {
@@ -40,25 +34,15 @@ function ShareToScreen({ route, navigation }) {
   const coworkers = useSelector(selectCoworkers);
   const myGroups = useSelector(selectMyGroups);
   const userId = useSelector(selectUserId);
-  const shifts = useSelector(selectShifts);
-  const userAvatarUrl = useSelector(selectUserAvatarUrl);
-  const [description, setDescription] = useState("");
-  const [value, setValue] = React.useState("");
-  const [errors, setErrors] = useState({});
-  const freshPost = useSelector(selectFreshPost);
   const headerHeight = useHeaderHeight();
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(true);
-  const [expanded2, setExpanded2] = React.useState(true);
-  const [checkboxGroupState, setCheckboxGroupState] = useState(
-    extractIdsAndAdd(myGroups, [])
-  );
-  const [checkboxUserState, setCheckboxUserState] = useState({});
+  const [expanded2, setExpanded2] = React.useState(false);
+  const checkboxUserState = useSelector(selectCheckboxUserState);
+  const checkboxGroupState = useSelector(selectCheckboxGroupState);
   const [filteredUser, setFilteredUser] = useState([]);
   const [selectAllUsers, setSelectAllUsers] = useState(false);
   const [selectAllGroups, setSelectAllGroups] = useState(false);
-
-  const hi = { a: 1, b: 2, c: 3, d: 4 };
 
   useEffect(() => {
     dispatch(fetchCoworkersAsync(userId));
@@ -66,42 +50,72 @@ function ShareToScreen({ route, navigation }) {
   }, []);
 
   useEffect(() => {
-    console.log("useEffect called");
-    setFilteredUser(coworkers);
-    setCheckboxUserState(extractIdsAndAdd(coworkers, []));
-  }, [coworkers]);
-
-  useEffect(() => {
-    console.log("useEffect called heere");
-    setFilteredUser(filterUsersById(coworkers, checkboxGroupState));
+    setFilteredUser(filterUsersByGroup(coworkers, checkboxGroupState));
+    setExpanded2(false);
   }, [checkboxGroupState]);
 
-  useEffect(() => {
-    console.log("useEffect called heere, cause UNIUQQQQQQ changing");
-  }, [filteredUser]);
+  function filterGroupsById(groups, groupIds) {
+    return groups.filter((group) => groupIds.includes(group.id));
+  }
+
+  function makeChipsForUser(shared_groups) {
+    let filteredGroups = filterGroupsById(myGroups, checkboxGroupState);
+    let moreFilteredGroups = filterGroupsById(filteredGroups, shared_groups);
+
+    return moreFilteredGroups;
+  }
 
   function selectAllUsersChecked() {
-    console.log("helllllllooooooooooooooooo");
-    console.log(selectAllUsers);
     if (!selectAllUsers) {
-      setCheckboxUserState(extractIdsAndAdd(filteredUser, checkboxUserState));
+      dispatch(
+        setCheckboxUserState(extractIdsAndAdd(filteredUser, checkboxUserState))
+      );
     } else {
-      setCheckboxUserState(removeIdsFromArray(checkboxUserState, filteredUser));
+      dispatch(
+        setCheckboxUserState(
+          removeIdsFromArray(checkboxUserState, filteredUser)
+        )
+      );
     }
-    console.log("BIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
-    console.log(checkboxUserState);
     setSelectAllUsers(!selectAllUsers);
   }
 
   function selectAllGroupsChecked() {
-    console.log(selectAllGroups);
     if (!selectAllGroups) {
-      setCheckboxGroupState(extractIdsAndAdd(myGroups, checkboxGroupState));
+      // user matters
+      setSelectAllUsers(true);
+      let newGroupState = extractIdsAndAdd(myGroups, checkboxGroupState);
+      let newFiltteredUsers = filterUsersByGroup(coworkers, newGroupState);
+      dispatch(
+        setCheckboxUserState(
+          extractIdsAndAdd(newFiltteredUsers, checkboxUserState)
+        )
+      );
+
+      // group matters
+      dispatch(
+        setCheckboxGroupState(extractIdsAndAdd(myGroups, checkboxGroupState))
+      );
     } else {
-      setCheckboxGroupState(removeIdsFromArray(checkboxGroupState, myGroups));
+      // user matters
+      setSelectAllUsers(false);
+      dispatch(setCheckboxUserState([]));
+
+      // group matters
+      dispatch(
+        setCheckboxGroupState(removeIdsFromArray(checkboxGroupState, myGroups))
+      );
     }
-    console.log("BIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
     setSelectAllGroups(!selectAllGroups);
+  }
+
+  function onSubmit() {
+    dispatch(
+      createProspectiveMembershipsObjects(
+        filterUsersById(coworkers, checkboxUserState)
+      )
+    );
+    navigation.navigate("Create Post");
   }
 
   function filterUsersById(usersArray, idsToKeep) {
@@ -112,6 +126,12 @@ function ShareToScreen({ route, navigation }) {
 
     // Return the array containing the filtered users
     return filteredUsers;
+  }
+
+  function filterUsersByGroup(users, inputGroupIds) {
+    return users.filter((user) =>
+      user.shared_groups.some((group) => inputGroupIds.includes(group))
+    );
   }
 
   function extractIdsAndAdd(arrayOfObjects, existingIdsArray) {
@@ -154,24 +174,84 @@ function ShareToScreen({ route, navigation }) {
     return remainingIds;
   }
 
-  const handlePress = () => setExpanded(!expanded);
+  // function checkboxTouched(id, checkboxObject, arrayType) {
+  //   if (isIdPresent(id, checkboxObject)) {
+  //     if (arrayType === "users") {
+  //       setSelectAllUsers(false);
+  //       dispatch(
+  //         setCheckboxUserState(removeIdFromArray(id, checkboxUserState))
+  //       );
+  //     } else {
+  //       setSelectAllGroups(false);
+  //       let newFiltteredUsers = filterUsersByGroup(
+  //         coworkers,
+  //         checkboxGroupState
+  //       );
+  //       dispatch(
+  //         setCheckboxUserState(
+  //           extractIdsAndAdd(newFiltteredUsers, checkboxUserState)
+  //         )
+  //       );
+  //       dispatch(
+  //         setCheckboxGroupState(removeIdFromArray(id, checkboxGroupState))
+  //       );
+  //     }
+  //   } else {
+  //     if (arrayType === "users") {
+  //       dispatch(setCheckboxUserState(addIdToArray(id, checkboxUserState)));
+  //     } else {
+  //       let newFiltteredUsers = filterUsersByGroup(
+  //         coworkers,
+  //         checkboxGroupState
+  //       );
+  //       dispatch(
+  //         setCheckboxUserState(
+  //           extractIdsAndAdd(newFiltteredUsers, checkboxUserState)
+  //         )
+  //       );
+  //       dispatch(setCheckboxGroupState(addIdToArray(id, checkboxGroupState)));
+  //     }
+  //   }
+  // }
 
   function checkboxTouched(id, checkboxObject, arrayType) {
-    if (isIdPresent(id, checkboxObject)) {
-      if (arrayType === "users") {
-        setCheckboxUserState(removeIdFromArray(id, checkboxUserState));
+    if (arrayType === "users") {
+      // checkbox is currently selected
+      if (isIdPresent(id, checkboxObject)) {
+        setSelectAllUsers(false);
+        dispatch(
+          setCheckboxUserState(removeIdFromArray(id, checkboxUserState))
+        );
       } else {
-        setCheckboxGroupState(removeIdFromArray(id, checkboxGroupState)); //
+        dispatch(setCheckboxUserState(addIdToArray(id, checkboxUserState)));
       }
     } else {
-      if (arrayType === "users") {
-        setCheckboxUserState(addIdToArray(id, checkboxUserState));
+      // Group checkbox matters
+      // If the checkbox has been selected
+      if (isIdPresent(id, checkboxObject)) {
+        setSelectAllGroups(false);
+        setSelectAllUsers(true);
+
+        let newGroupState = removeIdFromArray(id, checkboxGroupState);
+        let newFiltteredUsers = filterUsersByGroup(coworkers, newGroupState);
+
+        dispatch(setCheckboxUserState(extractIdsAndAdd(newFiltteredUsers, [])));
+        dispatch(setCheckboxGroupState(newGroupState));
       } else {
-        setCheckboxGroupState(addIdToArray(id, checkboxGroupState)); //
+        // if the group checkbox is currently not selected
+        setSelectAllUsers(true);
+
+        let newGroupState = addIdToArray(id, checkboxGroupState);
+        let newFiltteredUsers = filterUsersByGroup(coworkers, newGroupState);
+
+        dispatch(
+          setCheckboxUserState(
+            extractIdsAndAdd(newFiltteredUsers, checkboxUserState)
+          )
+        );
+        dispatch(setCheckboxGroupState(newGroupState));
       }
     }
-
-    console.log("touched");
   }
 
   function isIdPresent(idToCheck, idsArray) {
@@ -181,6 +261,9 @@ function ShareToScreen({ route, navigation }) {
 
   function removeIdFromArray(idToRemove, idsArray) {
     // Use the filter method to create a new array without the specified ID
+
+    console.log("id to remove: " + idToRemove);
+
     let newArray = idsArray.filter((id) => id !== idToRemove);
 
     // Return the new array without the removed ID
@@ -236,21 +319,27 @@ function ShareToScreen({ route, navigation }) {
     >
       {/* For some reason, the touchable without feedback here is causing the scrollview to not work...... */}
       {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> */}
-      <View style={{ paddingTop: headerHeight - 5 }}>
+      <View
+        style={{
+          paddingTop: headerHeight - 5,
+          flex: 1,
+        }}
+      >
         <ScrollView
           style={{
-            paddingLeft: 15,
-            paddingRight: 15,
+            paddingLeft: 10,
+            paddingRight: 10,
           }}
         >
           <List.Section>
             <List.Accordion
               title="Groups"
-              left={(props) => <List.Icon {...props} icon="folder" />}
+              left={(props) => <List.Icon {...props} icon="account-group" />}
               expanded={expanded}
               onPress={() => setExpanded(!expanded)}
             >
               <List.Item
+                key={1}
                 title="Select All"
                 onPress={() => selectAllGroupsChecked()}
                 left={(props) => <List.Icon {...props} icon="select-all" />}
@@ -264,9 +353,10 @@ function ShareToScreen({ route, navigation }) {
                   </View>
                 )}
               />
-              {myGroups.map((item) => {
+              {myGroups.map((item, i) => {
                 return (
                   <List.Item
+                    key={i + 1}
                     title={item.name}
                     onPress={() =>
                       checkboxTouched(item.id, checkboxGroupState, "groups")
@@ -288,12 +378,14 @@ function ShareToScreen({ route, navigation }) {
             </List.Accordion>
           </List.Section>
           <List.Accordion
-            title="Users"
-            left={(props) => <List.Icon {...props} icon="account-group" />}
+            title={"Users (" + checkboxUserState.length + " selected)"}
+            left={(props) => <List.Icon {...props} icon="account" />}
             expanded={expanded2}
             onPress={() => setExpanded2(!expanded2)}
           >
             <List.Item
+              key={1}
+              style={{ paddingRight: 0 }}
               title="Select All"
               onPress={() => selectAllUsersChecked()}
               left={(props) => <List.Icon {...props} icon="select-all" />}
@@ -307,43 +399,78 @@ function ShareToScreen({ route, navigation }) {
                 </View>
               )}
             />
-            {filteredUser.map((item) => {
+            {filteredUser.map((item, i) => {
               return (
-                <List.Item
-                  title={item.name}
-                  onPress={() =>
-                    checkboxTouched(item.id, checkboxUserState, "users")
-                  }
-                  left={() => LeftContent(item.avatar_url)}
-                  right={(props) => (
-                    <View style={{ justifyContent: "center" }}>
-                      <Checkbox.Item
-                        status={
-                          isIdPresent(item.id, checkboxUserState)
-                            ? "checked"
-                            : "unchecked"
-                        }
-                        mode="android"
-                        style={{ height: 20 }}
-                      />
-                    </View>
-                  )}
-                />
+                <View key={i + 1} style={{ paddingLeft: 0 }}>
+                  <List.Item
+                    style={{
+                      paddingRight: 0,
+                      paddingVertical: 0,
+                      paddingTop: 8,
+                    }}
+                    title={item.name}
+                    descriptionEllipsizeMode="tail"
+                    descriptionNumberOfLines={1}
+                    descriptionStyle={{
+                      display: "flex",
+                      backgroundColor: "red",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                    }}
+                    onPress={() =>
+                      checkboxTouched(item.id, checkboxUserState, "users")
+                    }
+                    left={() => LeftContent(item.avatar_url)}
+                    right={(props) => (
+                      <View style={{ justifyContent: "center" }}>
+                        <Checkbox.Item
+                          status={
+                            isIdPresent(item.id, checkboxUserState)
+                              ? "checked"
+                              : "unchecked"
+                          }
+                          mode="android"
+                          style={{ height: 20 }}
+                        />
+                      </View>
+                    )}
+                  />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      marginBottom: 5,
+                    }}
+                  >
+                    {makeChipsForUser(item.shared_groups).map((group, i) => {
+                      return (
+                        <Chip
+                          key={i}
+                          textStyle={{
+                            fontSize: 10,
+                          }}
+                        >
+                          {group.name}
+                        </Chip>
+                      );
+                    })}
+                  </View>
+                  <Divider />
+                </View>
               );
             })}
           </List.Accordion>
+          <Button
+            mode="contained"
+            onPress={() => onSubmit()}
+            style={{ marginTop: 25 }}
+          >
+            Save List
+          </Button>
         </ScrollView>
       </View>
-      <Button
-        mode="contained"
-        onPress={() => {
-          dispatch(createProspectiveMemberships(checkboxUserState));
-          navigation.navigate("Create Post");
-        }}
-        style={{ marginTop: 25 }}
-      >
-        Done
-      </Button>
+
       {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
   );

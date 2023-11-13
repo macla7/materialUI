@@ -11,7 +11,9 @@ export const Statuses = {
 const initialState = {
   start: new Date().toString(),
   end: new Date().toString(),
-  shifts: {},
+  description: "",
+  position: 0,
+  shifts: [],
   status: Statuses.Initial,
 };
 
@@ -30,13 +32,24 @@ export const shiftSlice = createSlice({
       state.shifts = action.payload;
     },
     resetShifts: (state, action) => {
-      state.shifts = {};
+      state.shifts = [];
+      state.start = new Date().toString();
+      state.end = new Date().toString();
+      state.position = 0;
+      state.description = "";
     },
     setStart: (state, action) => {
       state.start = action.payload;
     },
     setEnd: (state, action) => {
       state.end = action.payload;
+    },
+    setPosition: (state, action) => {
+      state.position = action.payload;
+    },
+    setDescription: (state, action) => {
+      console.log("working??");
+      state.description = action.payload;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -51,9 +64,15 @@ export const {
   editShift,
   setStart,
   setEnd,
+  setPosition,
+  setDescription,
 } = shiftSlice.actions;
 
 export const selectShifts = (state) => state.shifts.shifts;
+
+export const selectPosition = (state) => state.shifts.position;
+
+export const selectDescription = (state) => state.shifts.description;
 
 export const selectStart = (state) => state.shifts.start;
 

@@ -32,7 +32,7 @@ const initialState = {
   newUser: false,
   user: {
     id: null,
-    username: null,
+    name: null,
     email: null,
     avatar: null,
     avatar_url: null,
@@ -112,6 +112,7 @@ export const sessionSlice = createSlice({
           draftState["user"] = {
             id: action.payload.user.id,
             email: action.payload.user.email,
+            name: action.payload.user.name,
             avatar: action.payload.user.avatar,
             avatar_url: action.payload.user.avatar_url,
           };
@@ -143,6 +144,7 @@ export const sessionSlice = createSlice({
             draftState["user"] = {
               id: action.payload.user.id,
               email: action.payload.user.email,
+              name: action.payload.user.name,
               avatar: action.payload.user.avatar,
               avatar_url: action.payload.user.avatar_url,
             };
@@ -194,6 +196,7 @@ export const sessionSlice = createSlice({
             draftState["user"] = {
               id: action.payload.user.id,
               email: action.payload.user.email,
+              name: action.payload.user.name,
               avatar: action.payload.user.avatar,
               avatar_url: action.payload.user.avatar_url,
             };
@@ -211,6 +214,8 @@ export const sessionSlice = createSlice({
 });
 
 export const selectStatus = (state) => state.sessions.status;
+
+export const selectUserName = (state) => state.sessions.user?.name;
 
 export const selectUserEmail = (state) => state.sessions.user?.email;
 

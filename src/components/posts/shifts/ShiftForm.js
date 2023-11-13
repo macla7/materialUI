@@ -4,8 +4,12 @@ import {
   createShift,
   selectStart,
   selectEnd,
+  selectPosition,
+  selectDescription,
   setStart,
   setEnd,
+  setPosition,
+  setDescription,
 } from "./shiftSlice";
 import { format, compareAsc, addMinutes } from "date-fns";
 import {
@@ -15,7 +19,13 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import { TextInput, Text, SegmentedButtons, Button } from "react-native-paper";
+import {
+  TextInput,
+  Text,
+  SegmentedButtons,
+  Button,
+  HelperText,
+} from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { setMinutes, setHours, addHours } from "date-fns";
 import DateTimePicker, {
@@ -26,10 +36,10 @@ import DateTimePicker, {
 function ShiftForm({ navigation, route }) {
   const dispatch = useDispatch();
   const { returnScreen } = route.params;
-  const [position, setPosition] = useState(0);
+  const position = useSelector(selectPosition);
+  const description = useSelector(selectDescription);
   const start = useSelector(selectStart);
   const end = useSelector(selectEnd);
-  const [description, setDescription] = useState();
   const [errors, setErrors] = useState({});
   const headerHeight = useHeaderHeight();
   const [show, setShow] = useState(Platform.OS === "ios");
@@ -55,7 +65,7 @@ function ShiftForm({ navigation, route }) {
     checkEndTimeForErrors(newErrors);
 
     setErrors({ ...errors, ...newErrors });
-    if (areAllValuesNull(errors)) {
+    if (areAllValuesNull(errors) && areAllValuesNull(newErrors)) {
       return submitForm();
     }
   };
@@ -148,7 +158,7 @@ function ShiftForm({ navigation, route }) {
       style={{ flex: 1 }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={{ paddingTop: headerHeight - 5 }}>
+        <View style={{ paddingTop: headerHeight - 5, flex: 1 }}>
           <ScrollView
             style={{
               paddingLeft: 15,
@@ -162,7 +172,7 @@ function ShiftForm({ navigation, route }) {
               placeholder="Information for shift"
               style={{ height: 75, backgroundColor: "white", padding: 0 }}
               value={description}
-              onChangeText={setDescription}
+              onChangeText={(value) => dispatch(setDescription(value))}
             />
 
             {Platform.OS === "ios" ? null : (
@@ -184,7 +194,10 @@ function ShiftForm({ navigation, route }) {
 
             <SegmentedButtons
               value={position}
-              onValueChange={setPosition}
+              onValueChange={(value) => {
+                setErrors({ ...errors, end: null });
+                dispatch(setPosition(value));
+              }}
               buttons={[
                 {
                   value: 0,
@@ -215,6 +228,9 @@ function ShiftForm({ navigation, route }) {
               ]}
               style={{ marginTop: 25 }}
             />
+            <HelperText type="error" visible={errors.end !== undefined}>
+              {errors["end"]}
+            </HelperText>
 
             <Text variant="titleLarge" style={{ marginTop: 25 }}>
               Shift Time

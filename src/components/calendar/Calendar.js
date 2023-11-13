@@ -17,7 +17,7 @@ import { addDays } from "date-fns";
 const ITEMS = agendaItems;
 
 // -- Design thoughts --
-// Perhaps we load the native calendat events and store in state,
+// Perhaps we load the native calendar events and store in state,
 // on screen/component loading. Then we fetch the 'shifts' for the
 // current user, which will be a table in the db... The table in
 // DB will have to be separate to posts (dont know if it was for

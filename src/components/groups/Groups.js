@@ -29,16 +29,17 @@ function Groups({ navigation }) {
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
   return (
-    <View style={{ paddingTop: headerHeight - 5 }}>
+    <View style={{ paddingTop: headerHeight - 5, flex: 1 }}>
       <ScrollView
         style={{
           paddingLeft: 15,
           paddingRight: 15,
         }}
       >
-        {myGroups.map((item) => {
+        {myGroups.map((item, i) => {
           return (
             <List.Item
+              key={i}
               title={item.name}
               description={item.number_of_memberships + " members"}
               onPress={() => {
