@@ -21,6 +21,7 @@ import { selectUserId } from "../sessions/sessionSlice.js";
 import { Avatar, Button, Card, Text } from "react-native-paper";
 import { useTheme } from "react-native-paper";
 import { Image } from "react-native";
+import Shift from "../shifts/Shift";
 
 global.addEventListener = () => {};
 global.removeEventListener = () => {};
@@ -99,16 +100,52 @@ function Post(props) {
     return false;
   }
 
-  const oldLeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
+  function getColor(designPart) {
+    if (props.post.shift.position === undefined) {
+      return "";
+    }
+
+    if (designPart === "container") {
+      return shiftsColors[props.post.shift.position].container;
+    }
+
+    if (designPart === "color") {
+      return shiftsColors[props.post.shift.position].container;
+    }
+  }
+
+  const shiftsColors = {
+    PM: {
+      key: "PM",
+      container: theme.colors.customBlueContainer,
+      color: theme.colors.customBlue,
+    },
+    AM: {
+      key: "AM",
+      container: theme.colors.customOrangeContainer,
+      color: theme.colors.customOrange,
+    },
+    Night: {
+      key: "Night",
+      container: theme.colors.customPurpleContainer,
+      color: theme.colors.customPurple,
+    },
+    Custom: {
+      key: "Custom",
+      container: theme.colors.customPinkContainer,
+      color: theme.colors.customPink,
+    },
+    personal: { key: "personal", color: "black" },
+  };
 
   const LeftContent = (source) => (
     <Avatar.Image
       source={() => (
         <Image
-          source={source}
+          source={{ uri: source }}
           style={{
-            width: 40,
-            height: 40,
+            width: 30,
+            height: 30,
           }} // Set the width and height of the image
         />
       )}
@@ -126,45 +163,38 @@ function Post(props) {
     />
   );
 
+  console.log(props.post.shift.position);
+  console.log("on laoooaddoodo");
+
   return (
     <Card style={{ margin: 6, backgroundColor: "#fff" }}>
-      <Card.Title
-        title={props.post.postor_name + " > " + props.post.group_name}
-        subtitle="⭐️7"
-        left={() => LeftContent(HenIcon)}
-      />
       <Card.Content>
-        <Card
-          style={{
-            margin: 6,
-            backgroundColor: theme.colors.tertiaryContainer,
-          }}
-        >
-          <Card.Title
-            title="Thursday 2 Sep"
-            subtitle="AM"
-            titleStyle={{ color: theme.colors.onTertiaryContainer }}
-            subtitleStyle={{ color: theme.colors.onTertiaryContainer }}
-          />
-        </Card>
+        <Shift shift={props.post.shift} />
+
+        {/* From postForm */}
         <Text style={{ margin: 6 }} variant="bodyMedium">
           {props.post.body}
         </Text>
-        <Card style={{ backgroundColor: "#fff", margin: 6 }}>
-          <Card.Title
-            title="Jeff Bing"
-            subtitle="⭐️3"
-            left={() => LeftContent(LionIcon)}
-          />
-          <Card.Content>
-            <Card
-              style={{ backgroundColor: theme.colors.customPurpleContainer }}
-            >
-              <Card.Title title="Thursday 2 Sep" subtitle="NIGHT" />
-            </Card>
-          </Card.Content>
-        </Card>
-        <Card style={{ backgroundColor: "#fff", margin: 6 }}>
+
+        {props.post.comments.map((item, i) => {
+          <Card style={{ backgroundColor: "#fff", margin: 6 }}>
+            <Card.Title
+              title="Jeff Bing"
+              subtitle="⭐️3"
+              left={() => LeftContent(LionIcon)}
+            />
+            <Card.Content>
+              <Card
+                style={{
+                  backgroundColor: theme.colors.customPurpleContainer,
+                }}
+              >
+                <Card.Title title="Thursday 2 Sep" subtitle="NIGHT" />
+              </Card>
+            </Card.Content>
+          </Card>;
+        })}
+        {/* <Card style={{ backgroundColor: "#fff", margin: 6 }}>
           <Card.Title
             title="Luke Skywalker"
             subtitle="⭐️42"
@@ -177,7 +207,7 @@ function Post(props) {
               <Card.Title title="Thursday 2 Sep" subtitle="PM" />
             </Card>
           </Card.Content>
-        </Card>
+        </Card> */}
       </Card.Content>
       <Card.Actions>
         <Button>Like</Button>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  createShift,
+  createProShifts,
   selectStart,
   selectEnd,
   selectPosition,
@@ -31,11 +31,13 @@ import { setMinutes, setHours, addHours } from "date-fns";
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
+import { selectUserId } from "../sessions/sessionSlice";
 
 // Design is to be able to add multiple shifts to a post
 function ShiftForm({ navigation, route }) {
   const dispatch = useDispatch();
   const { returnScreen } = route.params;
+  const userId = useSelector(selectUserId);
   const position = useSelector(selectPosition);
   const description = useSelector(selectDescription);
   const start = useSelector(selectStart);
@@ -93,12 +95,13 @@ function ShiftForm({ navigation, route }) {
 
   function submitForm() {
     const shift = {
+      user_id: userId,
       position: position,
       start: start.toString(),
       end: end.toString(),
       description: description,
     };
-    dispatch(createShift(shift));
+    dispatch(createProShifts(shift));
 
     navigation.navigate({
       name: returnScreen,

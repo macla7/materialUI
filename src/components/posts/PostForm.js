@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPostAsync, selectFreshPost } from "./postSlice";
-import { resetShifts, selectShifts } from "./shifts/shiftSlice";
+import { resetProShifts, selectProShifts } from "../shifts/shiftSlice";
 import { createNotificationBlueprint } from "../notifications/notificationBlueprintAPI";
 import {
   View,
@@ -20,6 +20,7 @@ import {
   Avatar,
   HelperText,
   List,
+  Snackbar,
 } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { addDays, format } from "date-fns";
@@ -32,7 +33,7 @@ import {
 
 function PostForm({ route, navigation }) {
   const dispatch = useDispatch();
-  const shifts = useSelector(selectShifts);
+  const shifts = useSelector(selectProShifts);
   const checkboxUserState = useSelector(selectCheckboxUserState);
   const prospectiveMembershipsObjects = useSelector(
     selectProspectiveMembershipsObjects
@@ -46,6 +47,7 @@ function PostForm({ route, navigation }) {
   const headerHeight = useHeaderHeight();
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(true);
+  const [visibleSnackbar, setVisibleSnackbar] = React.useState(false);
 
   const handlePress = () => setExpanded(!expanded);
 
@@ -88,11 +90,9 @@ function PostForm({ route, navigation }) {
       members_attributes: checkboxUserState,
     };
     dispatch(createPostAsync(post));
-    dispatch(resetShifts());
+    dispatch(resetProShifts());
     setReason("");
-    navigation.navigate({
-      name: "Home",
-    });
+    setVisibleSnackbar(true);
     return true;
   }
 
@@ -177,7 +177,7 @@ function PostForm({ route, navigation }) {
               initEnd: addDays(currentDate, 7).toString(),
               returnScreen: "Create Post",
             });
-            dispatch(resetShifts());
+            dispatch(resetProShifts());
           }}
           style={{ marginTop: 15 }}
         >
@@ -352,7 +352,7 @@ function PostForm({ route, navigation }) {
           {checkboxUserState.length === 0 ? null : (
             <List.Section title="Share Post To">
               <List.Accordion
-                title="Coworkers"
+                title={"Coworkers (" + checkboxUserState.length + " selected)"}
                 left={(props) => <List.Icon {...props} icon="account-group" />}
                 expanded={expanded}
                 onPress={handlePress}
@@ -378,6 +378,18 @@ function PostForm({ route, navigation }) {
           )}
           {nextScreenButton()}
         </ScrollView>
+        <Snackbar
+          visible={visibleSnackbar}
+          onDismiss={() => setVisibleSnackbar(false)}
+          action={{
+            label: "Dismiss",
+            onPress: () => {
+              console.log("Snackbar dismissed");
+            },
+          }}
+        >
+          Post created!
+        </Snackbar>
       </View>
       {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>

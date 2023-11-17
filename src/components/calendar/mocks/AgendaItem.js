@@ -4,11 +4,11 @@ import {
   StyleSheet,
   Alert,
   View,
-  Text,
   TouchableOpacity,
   Button,
 } from "react-native";
-import testIDs from "./testIDs";
+import ShiftSmall from "../../shifts/ShiftSmall";
+import { Card, Text } from "react-native-paper";
 
 const AgendaItem = (props) => {
   const { item } = props;
@@ -29,20 +29,39 @@ const AgendaItem = (props) => {
     );
   }
 
+  const LeftContent = () => (
+    <View>
+      <Text>{item.hour}</Text>
+      <Text
+        style={{ color: "grey", fontSize: 12, marginTop: 4, marginLeft: 4 }}
+      >
+        {item.duration}
+      </Text>
+    </View>
+  );
+
   return (
-    <TouchableOpacity
-      onPress={itemPressed}
-      style={styles.item}
-      testID={testIDs.agenda.ITEM}
-    >
-      <View>
-        <Text style={styles.itemHourText}>{item.hour}</Text>
-        <Text style={styles.itemDurationText}>{item.duration}</Text>
-      </View>
-      <Text style={styles.itemTitleText}>{item.title}</Text>
-      <View style={styles.itemButtonContainer}>
-        <Button color={"grey"} title={"Info"} onPress={buttonPressed} />
-      </View>
+    <TouchableOpacity onPress={itemPressed} style={styles.item} testID="item">
+      {item.position ? (
+        <ShiftSmall shift={item} />
+      ) : (
+        <>
+          <Card
+            style={{
+              backgroundColor: "white",
+              flex: 1,
+            }}
+          >
+            <Card.Title
+              title={item.title}
+              titleVariant="titleMedium"
+              left={() => LeftContent()}
+              leftStyle={{ width: "auto" }}
+              titleStyle={{ paddingRight: 0 }}
+            />
+          </Card>
+        </>
+      )}
     </TouchableOpacity>
   );
 };
@@ -51,10 +70,9 @@ export default React.memo(AgendaItem);
 
 const styles = StyleSheet.create({
   item: {
-    padding: 20,
+    padding: 10,
+    paddingTop: 5,
     backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgrey",
     flexDirection: "row",
   },
   itemHourText: {
@@ -80,8 +98,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     height: 52,
     justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgrey",
   },
   emptyItemText: {
     color: "lightgrey",

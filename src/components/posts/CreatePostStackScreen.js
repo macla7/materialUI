@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import PostForm from "./PostForm";
-import ShiftForm from "./shifts/ShiftForm";
-import TimeAndDateScreen from "./shifts/TimeAndDateScreen";
+import ShiftForm from "../shifts/ShiftForm";
+import TimeAndDateScreen from "../shifts/TimeAndDateScreen";
 import ShareToScreen from "./ShareToScreen";
 // import GroupSearch from "../groups/GroupSearch";
 // import ReserveForm from "./ReserveForm";

@@ -1,11 +1,15 @@
+import { getValueFor } from "../sessions/sessionAPI.js";
 import { URL } from "@env";
 
-export async function fetchShifts(postId) {
-  return fetch(`${URL}/posts/${postId}/shifts.json`, {
+const API_URL = URL;
+
+export async function fetchShifts(userId) {
+  const auth_token = await getValueFor("auth_token");
+  return fetch(`${API_URL}/users/${userId}/shifts.json`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.auth_token}`,
+      Authorization: `Bearer ${auth_token}`,
     },
   })
     .then((response) => response.json())
@@ -17,11 +21,12 @@ export async function fetchShifts(postId) {
 }
 
 export async function createShift(shiftDetails) {
-  return fetch(`${URL}/shifts.json`, {
+  const auth_token = await getValueFor("auth_token");
+  return fetch(`${API_URL}/users/${shiftDetails.user_id}/shifts.json`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.auth_token}`,
+      Authorization: `Bearer ${auth_token}`,
     },
     body: JSON.stringify({ shift: shiftDetails }),
   })

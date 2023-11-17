@@ -63,9 +63,6 @@ function TabNavigator() {
 
   // For now, we will just sub to notification channel when in component
   const notificationsChannel = useMemo(() => {
-    console.log("user iddd is " + userId);
-    console.log("domain is " + domain);
-    console.log("consumer is sss" + consumer.subscriptions);
     return consumer.subscriptions.create(
       {
         channel: "NotificationsChannel",

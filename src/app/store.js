@@ -5,7 +5,7 @@ import membershipsReducer from "../components/groups/memberships/membershipSlice
 import usersReducer from "../components/users/userSlice";
 import notificationsReducer from "../components/notifications/notificationSlice";
 import postsReducer from "../components/posts/postSlice";
-import shiftsReducer from "../components/posts/shifts/shiftSlice";
+import shiftsReducer from "../components/shifts/shiftSlice";
 // import moneyReducer from "../components/posts/money/moneySlice";
 import invitesReducer from "../components/groups/invites/inviteSlice";
 import passwordsReducer from "../components/passwords/passwordSlice";

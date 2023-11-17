@@ -29,6 +29,11 @@ function Home({ navigation }) {
   }, []);
 
   useEffect(() => {
+    console.log("home posts are!!!");
+    console.log(homePosts);
+  }, [homePosts]);
+
+  useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       newUserFlow();
       refresh(); // Call the function when the screen is focused (navigated to)
@@ -56,30 +61,21 @@ function Home({ navigation }) {
         "created_at": "${formatISO(subDays(new Date(), 1))}",
         "updated_at": "${formatISO(subDays(new Date(), 1))}",
         "group_id": 1,
+        "hide": false,
+        "solution": "swap",
         "group_name": "Gotham General",
         "postor_name": "Tess Georges",
         "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBck1CIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--138ea1df8b223ff85a40c3146918b5570514c9cf/profilePictureUser421.jpg",
-        "shift": [
-            {
-                "id": 4,
-                "position": "Barista",
-                "start": "${formatISO(
-                  setSeconds(
-                    setMinutes(setHours(addDays(new Date(), 19), 9), 0),
-                    0
-                  )
-                )}",
-                "end": "${formatISO(
-                  setSeconds(
-                    setMinutes(setHours(addDays(new Date(), 19), 15), 0),
-                    0
-                  )
-                )}",
-                "post_id": 4,
-                "created_at": "2023-07-15T07:33:10.640Z",
-                "updated_at": "2023-07-15T07:33:10.640Z"
-            }
-        ],
+        "shift": {
+            "id": 12,
+            "start": "2023-11-28T20:00:24.000Z",
+            "end": "2023-11-29T04:30:24.000Z",
+            "created_at": "2023-11-13T04:25:40.373Z",
+            "updated_at": "2023-11-13T04:25:40.373Z",
+            "bid_id": null,
+            "position": "AM",
+            "description": "RN ward E"
+        },
         "likes": [
             {
                 "id": 27,
@@ -106,7 +102,6 @@ function Home({ navigation }) {
                 "id": 16,
                 "post_id": 4,
                 "user_id": 402,
-            
                 "created_at": "${formatISO(subHours(new Date(), 2))}",
                 "updated_at": "${formatISO(subHours(new Date(), 2))}",
                 "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcTBCIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2e9f2a9b0046539f89ac6ee560ba1ad155a5643b/profilePictureUser418.jpg",
@@ -116,7 +111,6 @@ function Home({ navigation }) {
                 "id": 11,
                 "post_id": 4,
                 "user_id": 2,
-            
                 "created_at": "${formatISO(subDays(new Date(), 1))}",
                 "updated_at": "${formatISO(subDays(new Date(), 1))}",
                 "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcThCIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e4a4a8d088c06790dc942d862602a44343f47a22/profilePictureUser419.jpg",
@@ -126,7 +120,6 @@ function Home({ navigation }) {
                 "id": 10,
                 "post_id": 4,
                 "user_id": 1,
-       
                 "created_at": "${formatISO(subDays(new Date(), 2))}",
                 "updated_at": "${formatISO(subDays(new Date(), 2))}",
                 "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBckVCIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c2e88df50446700c2152f5f38f15ba4ba1801376/profilePictureUser420.jpg",
@@ -142,13 +135,23 @@ function Home({ navigation }) {
         alignItems: "stretch",
       }}
     >
-      <Post
-        post={examplePost}
-        key={examplePost.id}
-        navigation={navigation}
-        singularView={false}
-        example={true}
-      />
+      {homePosts.length > 0 ? (
+        <Post
+          post={homePosts[0]}
+          key={0}
+          navigation={navigation}
+          singularView={false}
+          example={true}
+        />
+      ) : (
+        <Post
+          post={examplePost}
+          key={examplePost.id}
+          navigation={navigation}
+          singularView={false}
+          example={true}
+        />
+      )}
     </View>
   );
 }

@@ -15,7 +15,13 @@ const CalendarStack = createNativeStackNavigator();
 function CalendarStackScreen({ navigation }) {
   return (
     <CalendarStack.Navigator>
-      <CalendarStack.Screen name="Calendar" component={Calendar} />
+      <CalendarStack.Screen
+        name="Calendar"
+        component={Calendar}
+        options={{
+          headerShown: false,
+        }}
+      />
     </CalendarStack.Navigator>
   );
 }
