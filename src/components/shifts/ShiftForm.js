@@ -10,6 +10,8 @@ import {
   setEnd,
   setPosition,
   setDescription,
+  updateShiftAsync,
+  fetchShiftsForMonthAsync,
 } from "./shiftSlice";
 import { format, compareAsc, addMinutes } from "date-fns";
 import {
@@ -36,7 +38,7 @@ import { selectUserId } from "../sessions/sessionSlice";
 // Design is to be able to add multiple shifts to a post
 function ShiftForm({ navigation, route }) {
   const dispatch = useDispatch();
-  const { returnScreen } = route.params;
+  const { returnScreen, id } = route.params;
   const userId = useSelector(selectUserId);
   const position = useSelector(selectPosition);
   const description = useSelector(selectDescription);
@@ -100,9 +102,38 @@ function ShiftForm({ navigation, route }) {
       start: start.toString(),
       end: end.toString(),
       description: description,
+      status: 1,
     };
-    dispatch(createProShifts(shift));
 
+    console.log("we even getting, what about here?");
+
+    if (returnScreen == "Calendar") {
+      // dispatch create shift!!
+      console.log("we even getting here?");
+      console.log("whats the poosition ");
+      console.log(position);
+      const shiftForUpdate = {
+        id: id,
+        position: position,
+        start: start,
+        end: end,
+        description: description,
+        user_id: userId,
+      };
+      console.log(shiftForUpdate);
+      dispatch(updateShiftAsync(shiftForUpdate))
+        .then(() => {
+          // Assuming userId and formattedDate are correct, adjust as needed
+          const formattedDate = format(new Date(start), "yyyy-MM");
+          dispatch(fetchShiftsForMonthAsync({ userId, month: formattedDate }));
+        })
+        .catch((error) => {
+          console.error("An error occurred during shift destruction:", error);
+          // Handle error as needed
+        });
+    } else {
+      dispatch(createProShifts(shift));
+    }
     navigation.navigate({
       name: returnScreen,
       merge: true,

@@ -11,15 +11,15 @@ import ShiftSmall from "../../shifts/ShiftSmall";
 import { Card, Text } from "react-native-paper";
 
 const AgendaItem = (props) => {
-  const { item } = props;
+  const { item, navigation } = props;
 
-  const buttonPressed = useCallback(() => {
-    Alert.alert("Show me more");
-  }, []);
-
-  const itemPressed = useCallback(() => {
-    Alert.alert(item.title);
-  }, []);
+  // function itemPressedFunc() {
+  //   if (item.title === "") {
+  //     Alert.alert("no title");
+  //   } else {
+  //     Alert.alert(item.title);
+  //   }
+  // }
 
   if (isEmpty(item)) {
     return (
@@ -41,9 +41,9 @@ const AgendaItem = (props) => {
   );
 
   return (
-    <TouchableOpacity onPress={itemPressed} style={styles.item} testID="item">
+    <View style={styles.item} testID="item">
       {item.position ? (
-        <ShiftSmall shift={item} />
+        <ShiftSmall shift={item} navigation={navigation} />
       ) : (
         <>
           <Card
@@ -62,7 +62,7 @@ const AgendaItem = (props) => {
           </Card>
         </>
       )}
-    </TouchableOpacity>
+    </View>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   ExpandableCalendar,
   AgendaList,
@@ -20,12 +20,15 @@ import {
   parseISO,
   isBefore,
   addDays,
+  startOfMonth,
+  endOfMonth,
 } from "date-fns";
 import {
   fetchShiftsAsync,
   selectCurrentShifts,
   selectDate,
   setDate,
+  fetchShiftsForMonthAsync,
 } from "../shifts/shiftSlice";
 import { selectUserId } from "../sessions/sessionSlice";
 import { grandTheme } from "../../app/themeExtenders";
@@ -41,7 +44,7 @@ import { grandTheme } from "../../app/themeExtenders";
 // The shift in the DB should be heavily based off the Event data type
 // given back from the Expo Calendar package. As both will need to
 // populate the Agenda/Calendar related components.
-const ExpandableCalendarScreen = (props) => {
+const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   const customCalendarTheme = useRef(getTheme());
   const dispatch = useDispatch();
   const userId = useSelector(selectUserId);
@@ -52,7 +55,6 @@ const ExpandableCalendarScreen = (props) => {
   const [agendaShifts, setAgendaShifts] = useState([]);
   const [mergedAgenda, setMergedAgenda] = useState([]);
   const [merged, setMerged] = useState({});
-  const { weekView } = props;
 
   const [addingShifts, setAddingShifts] = useState(false);
   const todayBtnTheme = useRef({
@@ -61,7 +63,10 @@ const ExpandableCalendarScreen = (props) => {
   const date = useSelector(selectDate);
 
   useEffect(() => {
-    dispatch(fetchShiftsAsync(userId));
+    const formattedDate = format(new Date(), "yyyy-MM");
+    dispatch(
+      fetchShiftsForMonthAsync({ userId: userId, month: formattedDate })
+    );
   }, []);
 
   useEffect(() => {
@@ -69,24 +74,21 @@ const ExpandableCalendarScreen = (props) => {
     setAgendaShifts(transformShiftsToAgendaItems(currentShifts));
   }, [currentShifts]);
 
+  useEffect(() => {
+    setMerged(mergeOutputObjects(transformedEvents, transformedShifts));
+  }, [transformedShifts, transformedEvents]);
+
+  useEffect(() => {
+    console.log("get here?");
+    console.log(agendaEvents);
+    console.log(agendaShifts);
+    setMergedAgenda(mergeAndSortArrays(agendaEvents, agendaShifts));
+  }, [agendaShifts, agendaEvents]);
+
   // this useEffect is taken from https://docs.expo.dev/versions/latest/sdk/calendar/#event
   useEffect(() => {
     (async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === "granted") {
-        const calendars = await Calendar.getCalendarsAsync(
-          Calendar.EntityTypes.EVENT
-        );
-        const calendarIds = calendars.map((calendar) => calendar.id);
-        const currentDate = new Date();
-        const calendarsEvents = await Calendar.getEventsAsync(
-          calendarIds,
-          currentDate,
-          addDays(currentDate, 30)
-        );
-        setTransformedEvents(transformEventArray(calendarsEvents));
-        setAgendaEvents(transformEventsToAgendaItems(calendarsEvents));
-      }
+      getCalendarEvents();
     })();
     // need to have transformedShifts in the dependency array, due to the weird bug of transformedEvents being altered on
     //  useEffect(() => {
@@ -95,13 +97,25 @@ const ExpandableCalendarScreen = (props) => {
     // this somehow stops the altering of transformed events....
   }, [transformedShifts]);
 
-  useEffect(() => {
-    setMerged(mergeOutputObjects(transformedEvents, transformedShifts));
-  }, [transformedShifts]);
+  const getCalendarEvents = async () => {
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status === "granted") {
+      const calendars = await Calendar.getCalendarsAsync(
+        Calendar.EntityTypes.EVENT
+      );
+      const calendarIds = calendars.map((calendar) => calendar.id);
+      // const currentDate = new Date();
 
-  useEffect(() => {
-    setMergedAgenda(mergeAndSortArrays(agendaEvents, agendaShifts));
-  }, [agendaShifts]);
+      const calendarsEvents = await Calendar.getEventsAsync(
+        calendarIds,
+        startOfMonth(new Date(date)),
+        endOfMonth(new Date(date))
+      );
+
+      setTransformedEvents(transformEventArray(calendarsEvents));
+      setAgendaEvents(transformEventsToAgendaItems(calendarsEvents));
+    }
+  };
 
   function transformArray(inputArray) {
     const outputObject = {};
@@ -126,11 +140,15 @@ const ExpandableCalendarScreen = (props) => {
   function transformEventArray(inputData) {
     const outputObject = {};
 
+    console.log("trannnnnns formmming");
+    console.log(inputData);
     inputData.forEach((item) => {
-      const startDate = new Date(item.startDate).toISOString().split("T")[0];
+      const startDate = format(new Date(item.startDate), "yyyy-MM-dd");
+      console.log("start DAAAAAAAte is ");
+      console.log(startDate);
       let dots = [];
 
-      if (item.availability === "busy") {
+      if (item.title !== "") {
         dots.push({ color: grandTheme.personal.color });
       }
 
@@ -276,6 +294,10 @@ const ExpandableCalendarScreen = (props) => {
           duration: durationInHours,
           title: shift.description,
           position: shift.position,
+          id: shift.id,
+          start: shift.start,
+          end: shift.end,
+          status: shift.status,
         },
       ];
 
@@ -286,12 +308,24 @@ const ExpandableCalendarScreen = (props) => {
 
   // on month change let's fetch everything again.. let's just fetch by months!
   function onMonthChange(date) {
-    console.log("ExpandableCalendarScreen onMonthChange: ", date);
+    const formattedDate = format(new Date(date.dateString), "yyyy-MM");
+
+    dispatch(
+      fetchShiftsForMonthAsync({ userId: userId, month: formattedDate })
+    );
+    dispatch(setDate(new Date(date.dateString).toString()));
   }
 
-  const renderItem = useCallback(({ item }) => {
-    return <AgendaItem item={item} />;
-  }, []);
+  const renderItem = useCallback(
+    ({ item }) => {
+      return <AgendaItem item={item} navigation={navigation} />;
+    },
+    [mergedAgenda, merged]
+  );
+
+  function renderItemFunc(item) {
+    return <AgendaItem item={item.item} />;
+  }
 
   return (
     <CalendarProvider
@@ -306,6 +340,10 @@ const ExpandableCalendarScreen = (props) => {
       // disabledOpacity={0.6}
       theme={todayBtnTheme.current}
       // todayBottomMargin={16}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <Appbar.Header>
         <Appbar.Content title="Calendar" />
@@ -327,7 +365,6 @@ const ExpandableCalendarScreen = (props) => {
           // disablePan
           // hideKnob
           initialPosition={ExpandableCalendar.positions.OPEN}
-          // calendarStyle={styles.calendar}
           // headerStyle={styles.header} // for horizontal only
           // disableWeekScroll
           theme={{
@@ -357,11 +394,25 @@ const ExpandableCalendarScreen = (props) => {
         />
       )}
       {addingShifts ? (
-        <>
+        <View
+          style={{
+            flex: 1,
+            padding: 15,
+          }}
+        >
           <AddShiftsToCalendar />
-        </>
+          <Button
+            mode="contained"
+            onPress={() => {
+              setAddingShifts(!addingShifts);
+            }}
+          >
+            Done
+          </Button>
+        </View>
       ) : (
         <AgendaList
+          avoidDateUpdates
           sections={mergedAgenda}
           renderItem={renderItem}
           sectionStyle={{
@@ -380,15 +431,3 @@ const ExpandableCalendarScreen = (props) => {
 };
 
 export default ExpandableCalendarScreen;
-
-const styles = StyleSheet.create({
-  calendar: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    backgroundColor: "red",
-  },
-  header: {
-    backgroundColor: "lightgrey",
-  },
-  section: {},
-});

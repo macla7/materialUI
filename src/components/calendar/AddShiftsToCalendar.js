@@ -20,6 +20,7 @@ function AddShiftsToCalendar({ navigation }) {
         flexWrap: "wrap",
         flex: 1,
         justifyContent: "center",
+        height: 200,
         alignItems: "center",
       }}
     >
@@ -46,6 +47,7 @@ function AddShiftsToCalendar({ navigation }) {
         mode="contained"
         buttonColor={theme.shifts.PM.container}
         textColor={theme.shifts.PM.color}
+        style={{ marginLeft: 5 }}
         onPress={() => {
           let newDate = addDays(new Date(date), 1).toString();
           let shiftDetails = {
@@ -65,6 +67,7 @@ function AddShiftsToCalendar({ navigation }) {
         mode="contained"
         buttonColor={theme.shifts.Night.container}
         textColor={theme.shifts.Night.color}
+        style={{ marginLeft: 5 }}
         onPress={() => {
           let newDate = addDays(new Date(date), 1).toString();
           let newStart = set(new Date(date), { hours: 21, minutes: 0 });

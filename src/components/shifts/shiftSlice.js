@@ -1,6 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchShifts, createShift } from "./shiftAPI";
+import {
+  fetchShifts,
+  createShift,
+  fetchShiftsForMonth,
+  destroyShift,
+  updateShift,
+} from "./shiftAPI";
 import produce from "immer";
+import { startOfMonth } from "date-fns";
 
 export const Statuses = {
   Initial: "Not Fetched",
@@ -19,7 +26,7 @@ const initialState = {
   proShifts: [],
   currentShifts: [],
   status: Statuses.Initial,
-  date: new Date().toString(),
+  date: startOfMonth(new Date()).toString(),
 };
 
 export const fetchShiftsAsync = createAsyncThunk(
@@ -30,10 +37,33 @@ export const fetchShiftsAsync = createAsyncThunk(
   }
 );
 
+export const fetchShiftsForMonthAsync = createAsyncThunk(
+  "shifts/fetchShiftsForMonth",
+  async (userAndMonth) => {
+    const response = await fetchShiftsForMonth(userAndMonth);
+    return response;
+  }
+);
+
 export const createShiftAsync = createAsyncThunk(
   "shifts/createShift",
   async (shiftDetails) => {
     const response = await createShift(shiftDetails);
+    return response;
+  }
+);
+export const destroyShiftAsync = createAsyncThunk(
+  "shifts/destroyShift",
+  async (shiftDetails) => {
+    const response = await destroyShift(shiftDetails);
+    return response;
+  }
+);
+
+export const updateShiftAsync = createAsyncThunk(
+  "shifts/updateShift",
+  async (shiftDetails) => {
+    const response = await updateShift(shiftDetails);
     return response;
   }
 );
@@ -100,6 +130,27 @@ export const shiftSlice = createSlice({
         });
       })
       // while you wait
+      .addCase(fetchShiftsForMonthAsync.pending, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Loading;
+        });
+      })
+      // you got the thing
+      .addCase(fetchShiftsForMonthAsync.fulfilled, (state, action) => {
+        return produce(state, (draftState) => {
+          console.log("in shift sliceeeeee");
+          console.log(action.payload);
+          draftState.currentShifts = action.payload;
+          draftState.status = Statuses.UpToDate;
+        });
+      })
+      // error
+      .addCase(fetchShiftsForMonthAsync.rejected, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Error;
+        });
+      })
+      // while you wait
       .addCase(createShiftAsync.pending, (state) => {
         return produce(state, (draftState) => {
           draftState.status = Statuses.Loading;
@@ -114,6 +165,45 @@ export const shiftSlice = createSlice({
       })
       // error
       .addCase(createShiftAsync.rejected, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Error;
+        });
+      })
+      // while you wait
+      .addCase(destroyShiftAsync.pending, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Loading;
+        });
+      })
+      // you got the thing
+      .addCase(destroyShiftAsync.fulfilled, (state, action) => {
+        return produce(state, (draftState) => {
+          console.log("in shift sliceeeeee, we destroying and updaaaaating");
+
+          draftState.status = Statuses.UpToDate;
+        });
+      })
+      // error
+      .addCase(destroyShiftAsync.rejected, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Error;
+        });
+      })
+      // while you wait
+      .addCase(updateShiftAsync.pending, (state) => {
+        return produce(state, (draftState) => {
+          draftState.status = Statuses.Loading;
+        });
+      })
+      // you got the thing
+      .addCase(updateShiftAsync.fulfilled, (state, action) => {
+        return produce(state, (draftState) => {
+          console.log("in shift sliceeeeee, updaaaaating shiftssss");
+          draftState.status = Statuses.UpToDate;
+        });
+      })
+      // error
+      .addCase(updateShiftAsync.rejected, (state) => {
         return produce(state, (draftState) => {
           draftState.status = Statuses.Error;
         });
