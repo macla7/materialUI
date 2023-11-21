@@ -27,14 +27,6 @@ export const initialLikeState = {
   user_id: 0,
 };
 
-export const initialBidState = {
-  id: 0,
-  post_id: 0,
-  user_id: 0,
-  avatar_url: "",
-  created_at: Date.now(),
-};
-
 export const initialCommentState = {
   id: 0,
   post_id: 0,
@@ -46,9 +38,20 @@ export const initialCommentState = {
 
 export const initialShiftState = {
   id: 0,
-  position: "",
+  position: "AM",
   start: Date.now(),
   end: Date.now(),
+};
+
+export const initialBidState = {
+  id: 0,
+  post_id: 0,
+  user_id: 0,
+  avatar_url: "",
+  created_at: Date.now(),
+  shift_bidded: initialShiftState,
+  shift_id: 0,
+  approved: false,
 };
 
 export const initialState = {

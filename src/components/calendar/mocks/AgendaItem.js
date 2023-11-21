@@ -11,20 +11,12 @@ import ShiftSmall from "../../shifts/ShiftSmall";
 import { Card, Text } from "react-native-paper";
 
 const AgendaItem = (props) => {
-  const { item, navigation } = props;
-
-  // function itemPressedFunc() {
-  //   if (item.title === "") {
-  //     Alert.alert("no title");
-  //   } else {
-  //     Alert.alert(item.title);
-  //   }
-  // }
+  const { item, navigation, offering, postId } = props;
 
   if (isEmpty(item)) {
     return (
       <View style={styles.emptyItem}>
-        <Text style={styles.emptyItemText}>No Events Planned Today</Text>
+        <Text style={styles.emptyItemText}>No Events Planned</Text>
       </View>
     );
   }
@@ -43,7 +35,12 @@ const AgendaItem = (props) => {
   return (
     <View style={styles.item} testID="item">
       {item.position ? (
-        <ShiftSmall shift={item} navigation={navigation} />
+        <ShiftSmall
+          shift={item}
+          navigation={navigation}
+          offering={offering}
+          postId={postId}
+        />
       ) : (
         <>
           <Card

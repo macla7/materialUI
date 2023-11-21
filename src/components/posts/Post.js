@@ -18,9 +18,9 @@ import { domain } from "@env";
 import { selectUserId } from "../sessions/sessionSlice.js";
 // import { faEllipsis } from "@fortawesome/free-solid-svg-icons/faEllipsis";
 // import Likes from "./likes/Likes.js";
-import { Avatar, Button, Card, Text } from "react-native-paper";
+import { Avatar, Button, Card, Text, Icon } from "react-native-paper";
 import { useTheme } from "react-native-paper";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 import Shift from "../shifts/Shift";
 
 global.addEventListener = () => {};
@@ -163,20 +163,16 @@ function Post(props) {
     />
   );
 
-  console.log(props.post.shift.position);
-  console.log("on laoooaddoodo");
-
   return (
     <Card style={{ margin: 6, backgroundColor: "#fff" }}>
       <Card.Content>
         <Shift shift={props.post.shift} />
-
-        {/* From postForm */}
-        <Text style={{ margin: 6 }} variant="bodyMedium">
+        <Text style={{ marginTop: 5, marginLeft: 5 }} variant="bodyLarge">
           {props.post.body}
         </Text>
+        {/* From postForm */}
 
-        {props.post.comments.map((item, i) => {
+        {/* {props.post.comments.map((item, i) => {
           <Card style={{ backgroundColor: "#fff", margin: 6 }}>
             <Card.Title
               title="Jeff Bing"
@@ -193,26 +189,58 @@ function Post(props) {
               </Card>
             </Card.Content>
           </Card>;
-        })}
-        {/* <Card style={{ backgroundColor: "#fff", margin: 6 }}>
+        })} */}
+
+        <View
+          style={{
+            borderLeftWidth: 1,
+            marginLeft: 5,
+            borderColor: theme.colors.outline,
+          }}
+        >
           <Card.Title
-            title="Luke Skywalker"
-            subtitle="⭐️42"
-            left={() => LeftContent(KoalaIcon)}
+            title="Swaps Offered"
+            titleVariant="titleLarge"
+            leftStyle={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 5,
+            }}
+            left={() => <Icon size={28} source="calendar-multiple" />}
           />
-          <Card.Content>
-            <Card
-              style={{ backgroundColor: theme.colors.customOrangeContainer }}
-            >
-              <Card.Title title="Thursday 2 Sep" subtitle="PM" />
-            </Card>
-          </Card.Content>
-        </Card> */}
+
+          {bids.map((item, i) => {
+            let newShift = {
+              ...item.shift_bidded,
+              avatar_url: item.avatar_url,
+              owner_name: item.bidder_name,
+            };
+            return (
+              <View style={{ marginBottom: 10, marginLeft: 10 }}>
+                <Shift shift={newShift} />
+                <Text style={{ marginTop: 5, marginLeft: 5 }}>
+                  {formatDistanceToNow(new Date(item.created_at), {
+                    addSuffix: true,
+                  })}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
       </Card.Content>
+
       <Card.Actions>
         <Button>Like</Button>
         <Button>Comment</Button>
-        <Button>Offer</Button>
+        <Button
+          onPress={() => {
+            props.navigation.navigate("Offer Shift", {
+              postId: props.post.id,
+            });
+          }}
+        >
+          Offer
+        </Button>
       </Card.Actions>
     </Card>
   );

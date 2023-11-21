@@ -318,7 +318,14 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
 
   const renderItem = useCallback(
     ({ item }) => {
-      return <AgendaItem item={item} navigation={navigation} />;
+      return (
+        <AgendaItem
+          item={item}
+          navigation={navigation}
+          offering={false}
+          postId={0}
+        />
+      );
     },
     [mergedAgenda, merged]
   );

@@ -12,13 +12,21 @@ import HomeScreen from "./Home.js";
 // import CommentSettings from "../posts/comments/CommentSettings";
 // import ConfirmDeleteComment from "../posts/comments/ConfirmDeleteComment";
 import { View, Text } from "react-native-paper";
+import BidForm from "../posts/bids/BidForm.js";
 
 const HomeStack = createNativeStackNavigator();
 
 function HomeStackScreen({ navigation }) {
   return (
     <HomeStack.Navigator initialRouteName="Home">
-      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <HomeStack.Screen name="Offer Shift" component={BidForm} />
       {/* <HomeStack.Screen
         name="Home Feed"
         component={Home}

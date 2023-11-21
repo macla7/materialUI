@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { View } from "react-native";
+import { TouchableOpacity, View, Alert } from "react-native";
 import {
   Avatar,
   IconButton,
@@ -15,10 +15,13 @@ import { destroyShiftAsync, fetchShiftsForMonthAsync } from "./shiftSlice";
 import { selectUserId } from "../sessions/sessionSlice";
 import { format } from "date-fns";
 import { setPosition, setStart, setEnd, setDescription } from "./shiftSlice";
+import ShiftSmallCard from "./ShiftSmallCard";
+import { createBidAsync } from "../posts/postSlice";
 
-function ShiftSmall({ shift, navigation }) {
+function ShiftSmall({ shift, navigation, offering, postId }) {
   const theme = useTheme();
   const [visible, setVisible] = React.useState(false);
+  const [confirmSwapVisible, setConfirmSwapVisible] = useState(false);
   const dispatch = useDispatch();
   const userId = useSelector(selectUserId);
 
@@ -28,21 +31,11 @@ function ShiftSmall({ shift, navigation }) {
   const containerStyle = {
     backgroundColor: "white",
     padding: 10,
-    marginRight: "30%",
-    marginLeft: "30%",
-    borderRadius: 10,
+    marginRight: "10%",
+    marginLeft: "10%",
+    borderRadius: 12,
+    height: 200,
   };
-
-  const LeftContent = () => (
-    <View>
-      <Text>{shift.hour}</Text>
-      <Text
-        style={{ color: "grey", fontSize: 12, marginTop: 4, marginLeft: 4 }}
-      >
-        {shift.duration}
-      </Text>
-    </View>
-  );
 
   const handleDelete = async () => {
     const formattedDate = format(new Date(shift.start), "yyyy-MM");
@@ -66,135 +59,134 @@ function ShiftSmall({ shift, navigation }) {
       });
   };
 
-  function shiftStatusHelper(status) {
-    if (status == "posting") {
-      return (
-        <>
-          <Text>Posted shift</Text>
-          <Text>for swap</Text>
-        </>
-      );
-    } else if (status == "bidding") {
-      return (
-        <>
-          <Text>Offering shift</Text>
-          <Text>for swap</Text>
-        </>
-      );
+  function returnAction() {
+    if (shift.status == "no") {
+      if (offering) {
+        offerToSwap();
+      } else {
+        showGeneralActions();
+      }
     } else {
-      return (
-        <>
-          <Text>status of</Text>
-          <Text>shift unknown</Text>
-        </>
-      );
+      // alert about it being offering / posted already
+      if (shift.status == "posting") {
+        Alert.alert("You have posted this shift for swap");
+      } else {
+        Alert.alert("You have offered this shift for swap");
+      }
     }
   }
 
-  return (
-    <Card
-      style={{
-        backgroundColor: theme.shifts[shift.position].container,
-        flex: 1,
-      }}
-    >
-      <Card.Title
-        title={shift.position}
-        subtitle={shift.title}
-        titleVariant="titleLarge"
-        subtitleVariant="bodyMedium"
-        left={() => LeftContent()}
-        leftStyle={{ width: "auto" }}
-        titleStyle={{ paddingRight: 0 }}
-        right={() => (
-          <Card.Actions>
-            {shift.status !== "no" ? (
-              <View
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {shiftStatusHelper(shift.status)}
-              </View>
-            ) : (
-              <IconButton
-                icon="pencil"
-                mode="contained"
-                iconColor={theme.shifts[shift.position].onColor}
-                containerColor={theme.shifts[shift.position].color}
-                onPress={showModal}
-              />
-            )}
-            <Portal>
-              <Modal
-                visible={visible}
-                onDismiss={hideModal}
-                contentContainerStyle={containerStyle}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Button
-                    mode="contained"
-                    style={{
-                      marginTop: 10,
-                      marginBottom: 10,
-                    }}
-                    onPress={() => {}}
-                    icon="calendar-multiple"
-                  >
-                    Swap
-                  </Button>
-                  <Button
-                    mode="contained"
-                    style={{
-                      marginTop: 10,
-                      marginBottom: 10,
-                    }}
-                    icon="pencil"
-                    onPress={() => {
-                      dispatch(setStart(shift.start));
-                      dispatch(setEnd(shift.end));
-                      dispatch(setPosition(shift.position));
-                      dispatch(setDescription(shift.title));
+  function offerToSwap() {
+    console.log("biiiii");
+    setConfirmSwapVisible(true);
+    // show modal to confirm offer to swap ...
+  }
 
-                      navigation.navigate("CreatePostStack", {
-                        screen: "Add Shift",
-                        params: {
-                          id: shift.id,
-                          returnScreen: "Calendar",
-                        },
-                      });
-                      hideModal();
-                    }}
-                    buttonColor={theme.colors.tertiary}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    mode="contained"
-                    style={{
-                      marginTop: 10,
-                      marginBottom: 10,
-                    }}
-                    icon="delete"
-                    onPress={handleDelete}
-                    buttonColor={theme.colors.customPink}
-                  >
-                    Delete
-                  </Button>
-                </View>
-              </Modal>
-            </Portal>
-          </Card.Actions>
-        )}
-      />
-    </Card>
+  function showGeneralActions() {
+    showModal();
+  }
+
+  function submitSwap() {
+    let bidDetails = {
+      post_id: postId,
+      user_id: userId,
+      approved: false,
+      shift_id: shift.id,
+    };
+    console.log("bid details are ...");
+    console.log(bidDetails);
+    // create Bid
+    dispatch(createBidAsync(bidDetails));
+
+    // updateshift
+  }
+
+  return (
+    <TouchableOpacity style={{ flex: 1 }} onPress={returnAction}>
+      <ShiftSmallCard offering={offering} shift={shift} />
+      <Portal>
+        <Modal
+          visible={confirmSwapVisible}
+          onDismiss={() => setConfirmSwapVisible(false)}
+          contentContainerStyle={containerStyle}
+        >
+          <ShiftSmallCard offering={offering} shift={shift} />
+          <Button
+            mode="contained"
+            style={{
+              marginTop: 25,
+              marginBottom: 10,
+            }}
+            onPress={submitSwap}
+            icon="calendar-multiple"
+          >
+            Offer to Swap
+          </Button>
+        </Modal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={containerStyle}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Button
+              mode="contained"
+              style={{
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+              onPress={() => {}}
+              icon="calendar-multiple"
+            >
+              Swap
+            </Button>
+            <Button
+              mode="contained"
+              style={{
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+              icon="pencil"
+              onPress={() => {
+                dispatch(setStart(shift.start));
+                dispatch(setEnd(shift.end));
+                dispatch(setPosition(shift.position));
+                dispatch(setDescription(shift.title));
+
+                navigation.navigate("CreatePostStack", {
+                  screen: "Add Shift",
+                  params: {
+                    id: shift.id,
+                    returnScreen: "Calendar",
+                  },
+                });
+                hideModal();
+              }}
+              buttonColor={theme.colors.tertiary}
+            >
+              Edit
+            </Button>
+            <Button
+              mode="contained"
+              style={{
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+              icon="delete"
+              onPress={handleDelete}
+              buttonColor={theme.colors.customPink}
+            >
+              Delete
+            </Button>
+          </View>
+        </Modal>
+      </Portal>
+    </TouchableOpacity>
   );
 }
 

@@ -18,6 +18,7 @@ import {
 } from "date-fns";
 import { selectNewUser } from "../sessions/sessionSlice";
 import { View, Text } from "react-native";
+import { Appbar } from "react-native-paper";
 
 function Home({ navigation }) {
   const homePosts = useSelector(selectHomePosts);
@@ -135,6 +136,12 @@ function Home({ navigation }) {
         alignItems: "stretch",
       }}
     >
+      <Appbar.Header>
+        <Appbar.Content title="Home" />
+        <Appbar.Action icon="information" />
+        <Appbar.Action icon="magnify" onPress={() => {}} />
+      </Appbar.Header>
+
       {homePosts.length > 0 ? (
         <Post
           post={homePosts[0]}

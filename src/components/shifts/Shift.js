@@ -2,7 +2,7 @@ import React from "react";
 import { format } from "date-fns";
 import { Avatar, Button, Card, Text } from "react-native-paper";
 import { useTheme } from "react-native-paper";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 
 function Shift({ shift }) {
   const theme = useTheme();
@@ -81,21 +81,25 @@ function Shift({ shift }) {
   return (
     <Card style={{ backgroundColor: getColor("container") }}>
       <Card.Title
-        title={
-          formatDateTime(shift.start, "EEE do LLL") + " - " + shift.position
-        }
+        title={formatDateTime(shift.start, "EEE do LLL")}
         subtitle={shift.owner_name}
         titleVariant="titleLarge"
         subtitleVariant="bodyMedium"
         left={() => LeftContent(shift.avatar_url)}
       />
+
       <Card.Content>
-        <Text variant="bodyLarge">
-          {formatDateTime(shift.start, "p") +
-            " - " +
-            formatDateTime(shift.end, "p")}
-        </Text>
-        <Text variant="bodyMedium">{shift.description}</Text>
+        {shift.description == "" ? null : (
+          <Text variant="bodyMedium">{shift.description}</Text>
+        )}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text variant="bodyLarge">{shift.position}</Text>
+          <Text variant="bodyLarge">
+            {formatDateTime(shift.start, "p") +
+              " → " +
+              formatDateTime(shift.end, "p")}
+          </Text>
+        </View>
       </Card.Content>
       <Card.Actions>
         {/* <Button
