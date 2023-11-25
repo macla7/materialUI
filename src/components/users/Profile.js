@@ -14,6 +14,7 @@ import {
 } from "../users/pushTokenSlice";
 import { logoutUserAsync } from "../sessions/sessionSlice";
 import { View, Text } from "react-native";
+import { Button } from "react-native-paper";
 
 function Profile({ navigation }) {
   // const user = useSelector(selectUser);
@@ -24,9 +25,9 @@ function Profile({ navigation }) {
   // const [editingName, setEditingName] = useState(false);
   // const [formData, setFormData] = useState({ name: user.name });
   // const [errors, setErrors] = useState({});
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // const userAvatarUrl = useSelector(selectUserAvatarUrl);
-  // const currentPushToken = useSelector(selectCurrentPushToken);
+  const currentPushToken = useSelector(selectCurrentPushToken);
 
   // useEffect(() => {
   //   dispatch(fetchUserAsync(userId));
@@ -107,9 +108,21 @@ function Profile({ navigation }) {
   //   dispatch(logoutUserAsync());
   // }
 
+  function onLogout() {
+    dispatch(logoutUserAsync());
+    dispatch(destroyPushTokenAsync(currentPushToken));
+  }
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Profile!</Text>
+      <Button
+        onPress={() => {
+          onLogout();
+        }}
+      >
+        Logout
+      </Button>
     </View>
   );
 }

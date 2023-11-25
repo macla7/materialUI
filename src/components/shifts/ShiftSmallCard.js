@@ -45,6 +45,7 @@ function ShiftSmallCard({ shift, offering }) {
     <Card
       style={{
         backgroundColor: theme.shifts[shift.position].container,
+        minHeight: 50,
       }}
     >
       <Card.Title
@@ -54,7 +55,9 @@ function ShiftSmallCard({ shift, offering }) {
         subtitleVariant="bodyMedium"
         left={() => LeftContent()}
         leftStyle={{ width: "auto" }}
+        rightStyle={{ padding: 0 }}
         titleStyle={{ paddingRight: 0 }}
+        style={{ minHeight: 60 }}
         right={() => (
           <Card.Actions>
             {shift.status !== "no" ? (
@@ -71,6 +74,7 @@ function ShiftSmallCard({ shift, offering }) {
               <IconButton
                 icon="pencil"
                 mode="contained"
+                size={16}
                 iconColor={theme.shifts[shift.position].onColor}
                 containerColor={theme.shifts[shift.position].color}
               />

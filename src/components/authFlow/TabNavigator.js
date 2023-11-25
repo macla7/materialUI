@@ -228,9 +228,13 @@ function TabNavigator() {
         component={HomeStackScreen}
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
+            <MaterialCommunityIcons
+              name="swap-horizontal"
+              color={color}
+              size={26}
+            />
           ),
-          title: "Home",
+          title: "Swaps",
         }}
       />
       <Tab.Screen

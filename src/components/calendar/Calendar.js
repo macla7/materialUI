@@ -209,6 +209,8 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   }
 
   function sortArrayByTitle(array) {
+    console.log("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn sort");
+    console.log(array);
     const compareDates = (a, b) => {
       const dateA = new Date(a.title);
       const dateB = new Date(b.title);
@@ -353,7 +355,7 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
       }}
     >
       <Appbar.Header>
-        <Appbar.Content title="Calendar" />
+        <Appbar.Content title="Your Calendar" />
         <Appbar.Action
           icon="plus"
           onPress={() => {
@@ -423,8 +425,8 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
           sections={mergedAgenda}
           renderItem={renderItem}
           sectionStyle={{
-            paddingTop: 10,
-            paddingBottom: 10,
+            paddingTop: 7,
+            paddingBottom: 7,
             color: "grey",
             textTransform: "capitalize",
           }}

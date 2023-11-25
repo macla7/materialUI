@@ -17,7 +17,7 @@ import {
   subHours,
 } from "date-fns";
 import { selectNewUser } from "../sessions/sessionSlice";
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { Appbar } from "react-native-paper";
 
 function Home({ navigation }) {
@@ -137,28 +137,33 @@ function Home({ navigation }) {
       }}
     >
       <Appbar.Header>
-        <Appbar.Content title="Home" />
+        <Appbar.Content title="Swaps" />
         <Appbar.Action icon="information" />
         <Appbar.Action icon="magnify" onPress={() => {}} />
       </Appbar.Header>
-
-      {homePosts.length > 0 ? (
-        <Post
-          post={homePosts[0]}
-          key={0}
-          navigation={navigation}
-          singularView={false}
-          example={true}
-        />
-      ) : (
-        <Post
-          post={examplePost}
-          key={examplePost.id}
-          navigation={navigation}
-          singularView={false}
-          example={true}
-        />
-      )}
+      <ScrollView>
+        {homePosts.length > 0 ? (
+          homePosts.map((item, i) => {
+            return (
+              <Post
+                post={item}
+                key={i}
+                navigation={navigation}
+                singularView={false}
+                example={true}
+              />
+            );
+          })
+        ) : (
+          <Post
+            post={examplePost}
+            key={examplePost.id}
+            navigation={navigation}
+            singularView={false}
+            example={true}
+          />
+        )}
+      </ScrollView>
     </View>
   );
 }

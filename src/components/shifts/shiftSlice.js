@@ -17,15 +17,19 @@ export const Statuses = {
   Error: "Error",
 };
 
-const initialState = {
+const shiftState = {
   user_id: 0,
   start: new Date().toString(),
   end: new Date().toString(),
   description: "",
-  position: 0,
+  position: "AM",
+  status: Statuses.Initial,
+};
+
+const initialState = {
+  ...shiftState,
   proShifts: [],
   currentShifts: [],
-  status: Statuses.Initial,
   date: startOfMonth(new Date()).toString(),
 };
 
@@ -81,6 +85,11 @@ export const shiftSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       state.proShifts = action.payload;
+      state.start = action.payload[0].start;
+      state.end = action.payload[0].end;
+      state.position = action.payload[0].position;
+      state.description = action.payload[0].description;
+      state.user_id = action.payload[0].user_id;
     },
     resetProShifts: (state, action) => {
       state.proShifts = [];

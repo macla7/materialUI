@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-export const themeColor = "#38656a";
+export const themeColor = "rgb(0, 110, 29)";
 export const lightThemeColor = "#f2f7f7";
 
 export function getTheme() {

@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TouchableOpacity, View, Alert } from "react-native";
-import {
-  Avatar,
-  IconButton,
-  Card,
-  Text,
-  useTheme,
-  Modal,
-  Portal,
-  Button,
-} from "react-native-paper";
-import { destroyShiftAsync, fetchShiftsForMonthAsync } from "./shiftSlice";
+import { useTheme, Modal, Portal, Button } from "react-native-paper";
 import { selectUserId } from "../sessions/sessionSlice";
 import { format } from "date-fns";
-import { setPosition, setStart, setEnd, setDescription } from "./shiftSlice";
+import {
+  setPosition,
+  setStart,
+  setEnd,
+  setDescription,
+  createProShifts,
+  destroyShiftAsync,
+  fetchShiftsForMonthAsync,
+} from "./shiftSlice";
 import ShiftSmallCard from "./ShiftSmallCard";
 import { createBidAsync } from "../posts/postSlice";
 
@@ -140,7 +138,20 @@ function ShiftSmall({ shift, navigation, offering, postId }) {
                 marginTop: 10,
                 marginBottom: 10,
               }}
-              onPress={() => {}}
+              onPress={() => {
+                dispatch(
+                  createProShifts([{ ...shift, description: shift.title }])
+                );
+
+                navigation.navigate("CreatePostStack", {
+                  screen: "Create Post",
+                  params: {
+                    id: shift.id,
+                    returnScreen: "Calendar",
+                  },
+                });
+                hideModal();
+              }}
               icon="calendar-multiple"
             >
               Swap

@@ -132,7 +132,7 @@ function ShiftForm({ navigation, route }) {
           // Handle error as needed
         });
     } else {
-      dispatch(createProShifts(shift));
+      dispatch(createProShifts([shift]));
     }
     navigation.navigate({
       name: returnScreen,
@@ -234,22 +234,22 @@ function ShiftForm({ navigation, route }) {
               }}
               buttons={[
                 {
-                  value: 0,
+                  value: "AM",
                   label: "AM",
                   onPress: () => setAM(new Date(start)),
                 },
                 {
-                  value: 1,
+                  value: "PM",
                   label: "PM",
                   onPress: () => setPM(new Date(start)),
                 },
                 {
-                  value: 2,
+                  value: "Night",
                   label: "Night",
                   onPress: () => setNight(new Date(start)),
                 },
                 {
-                  value: 3,
+                  value: "Custom",
                   label: "Custom",
                   onPress: () => {
                     navigation.navigate("Time and Date", {

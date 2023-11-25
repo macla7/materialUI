@@ -86,37 +86,40 @@ function Shift({ shift }) {
         titleVariant="titleLarge"
         subtitleVariant="bodyMedium"
         left={() => LeftContent(shift.avatar_url)}
+        rightStyle={{ padding: 20 }}
+        right={() => <Text variant="titleLarge">{shift.position}</Text>}
       />
 
-      <Card.Content>
-        {shift.description == "" ? null : (
-          <Text variant="bodyMedium">{shift.description}</Text>
-        )}
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      {shift.description == "" ? null : (
+        <Card.Content>
+          <Text variant="bodyLarge">{shift.description}</Text>
+        </Card.Content>
+      )}
+      {/* <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text variant="bodyLarge">{shift.position}</Text>
           <Text variant="bodyLarge">
             {formatDateTime(shift.start, "p") +
               " → " +
               formatDateTime(shift.end, "p")}
           </Text>
-        </View>
-      </Card.Content>
-      <Card.Actions>
-        {/* <Button
-              // textColor={shiftsColors[shift.position].color}
-              onPress={() => {
-                const currentDate = new Date();
-                navigation.navigate("Add Shift", {
-                  returnScreen: "Create Post",
-                });
-              }}
-            >
-              Edit
-            </Button> */}
-        {/* <Button buttonColor={shiftsColors[shifts.position].color}>
-                  Delete
-                </Button> */}
-      </Card.Actions>
+        </View> */}
+
+      {/* <Card.Actions>
+        <Button
+          // textColor={shiftsColors[shift.position].color}
+          onPress={() => {
+            const currentDate = new Date();
+            navigation.navigate("Add Shift", {
+              returnScreen: "Create Post",
+            });
+          }}
+        >
+          Edit
+        </Button>
+        <Button buttonColor={shiftsColors[shifts.position].color}>
+          Delete
+        </Button>
+      </Card.Actions> */}
     </Card>
   );
 }

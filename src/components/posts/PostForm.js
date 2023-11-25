@@ -33,7 +33,7 @@ import {
 
 function PostForm({ route, navigation }) {
   const dispatch = useDispatch();
-  const shifts = useSelector(selectProShifts);
+  const proShifts = useSelector(selectProShifts);
   const checkboxUserState = useSelector(selectCheckboxUserState);
   const prospectiveMembershipsObjects = useSelector(
     selectProspectiveMembershipsObjects
@@ -50,6 +50,14 @@ function PostForm({ route, navigation }) {
   const [visibleSnackbar, setVisibleSnackbar] = React.useState(false);
 
   const handlePress = () => setExpanded(!expanded);
+
+  console.log("prroooooooooo shift it");
+  console.log(proShifts);
+
+  useEffect(() => {
+    console.log("prooooo pppp shift it");
+    console.log(proShifts);
+  }, []);
 
   useEffect(() => {
     if (freshPost.id != 0) {
@@ -85,7 +93,7 @@ function PostForm({ route, navigation }) {
     console.log("making POSTTTTTTTTT");
     let post = {
       body: reason,
-      shift_attributes: shifts,
+      shift_attributes: proShifts,
       solution: solution,
       members_attributes: checkboxUserState,
     };
@@ -103,7 +111,7 @@ function PostForm({ route, navigation }) {
   };
 
   const checkShiftsForErrors = (newErrors) => {
-    if (shifts.length === 0) {
+    if (proShifts.length === 0) {
       newErrors["shifts"] = "At least one Shift is requried";
     }
   };
@@ -141,31 +149,31 @@ function PostForm({ route, navigation }) {
   }
 
   const shiftsColors = {
-    1: {
+    PM: {
       key: "PM",
       container: theme.colors.customBlueContainer,
       color: theme.colors.customBlue,
     },
-    0: {
+    AM: {
       key: "AM",
       container: theme.colors.customOrangeContainer,
       color: theme.colors.customOrange,
     },
-    2: {
+    Night: {
       key: "Night",
       container: theme.colors.customPurpleContainer,
       color: theme.colors.customPurple,
     },
-    3: {
+    Custom: {
       key: "Custom",
       container: theme.colors.customPinkContainer,
       color: theme.colors.customPink,
     },
-    5: { key: "personal", color: "black" },
+    Personal: { key: "personal", color: "black" },
   };
 
   function nextScreenButton() {
-    if (shifts.length === 0) {
+    if (proShifts.length === 0) {
       return (
         <Button
           icon="calendar"
@@ -173,11 +181,9 @@ function PostForm({ route, navigation }) {
           onPress={() => {
             const currentDate = new Date();
             navigation.navigate("Add Shift", {
-              initStart: addDays(currentDate, 7).toString(),
-              initEnd: addDays(currentDate, 7).toString(),
               returnScreen: "Create Post",
             });
-            dispatch(resetProShifts());
+            // dispatch(resetProShifts());
           }}
           style={{ marginTop: 15 }}
         >
@@ -302,18 +308,18 @@ function PostForm({ route, navigation }) {
             {errors["solution"]}
           </HelperText>
 
-          {shifts.description !== undefined ? (
+          {proShifts.length > 0 ? (
             <Card
               style={{
                 marginTop: 15,
-                backgroundColor: shiftsColors[shifts.position].container,
+                backgroundColor: shiftsColors[proShifts[0].position].container,
               }}
             >
               <Card.Title
                 title={
-                  format(new Date(shifts.start), "EEE do LLL") +
+                  format(new Date(proShifts[0].start), "EEE do LLL") +
                   " - " +
-                  shiftPosition(shifts.position)
+                  proShifts[0].position
                 }
                 subtitle={userName}
                 titleVariant="titleLarge"
@@ -322,16 +328,16 @@ function PostForm({ route, navigation }) {
               />
               <Card.Content>
                 <Text variant="bodyLarge">
-                  {format(new Date(shifts.start), "p") +
+                  {format(new Date(proShifts[0].start), "p") +
                     " - " +
-                    format(new Date(shifts.end), "p")}
+                    format(new Date(proShifts[0].end), "p")}
                 </Text>
-                <Text variant="bodyMedium">{shifts.description}</Text>
+                <Text variant="bodyMedium">{proShifts[0].description}</Text>
               </Card.Content>
               {/* <Card.Cover source={{ uri: "https://picsum.photos/700" }} /> */}
               <Card.Actions>
                 <Button
-                  textColor={shiftsColors[shifts.position].color}
+                  textColor={shiftsColors[proShifts[0].position].color}
                   onPress={() => {
                     const currentDate = new Date();
                     navigation.navigate("Add Shift", {
@@ -341,9 +347,9 @@ function PostForm({ route, navigation }) {
                 >
                   Edit
                 </Button>
-                {/* <Button buttonColor={shiftsColors[shifts.position].color}>
-                  Delete
-                </Button> */}
+                {/* <Button buttonColor={shiftsColors[proShifts.position].color}>
+              Delete
+            </Button> */}
               </Card.Actions>
             </Card>
           ) : null}

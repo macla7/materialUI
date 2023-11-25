@@ -41,7 +41,7 @@ const AgendaItem = (props) => {
           offering={offering}
           postId={postId}
         />
-      ) : (
+      ) : item.title == "Thanksgiving" ? null : (
         <>
           <Card
             style={{
@@ -55,6 +55,7 @@ const AgendaItem = (props) => {
               left={() => LeftContent()}
               leftStyle={{ width: "auto" }}
               titleStyle={{ paddingRight: 0 }}
+              style={{ minHeight: 60 }}
             />
           </Card>
         </>
@@ -69,6 +70,7 @@ const styles = StyleSheet.create({
   item: {
     padding: 10,
     paddingTop: 5,
+    paddingBottom: 7,
     backgroundColor: "white",
     flexDirection: "row",
   },

@@ -24,6 +24,7 @@ import AuthStackScreen from "./src/components/authFlow/AuthStackScreen";
 export default function App() {
   return (
     <Provider store={store}>
+      <StatusBar style="dark" />
       <PaperProvider theme={grandTheme}>
         <NavigationContainer>
           <AuthStackScreen />

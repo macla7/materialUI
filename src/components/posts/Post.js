@@ -164,15 +164,16 @@ function Post(props) {
   );
 
   return (
-    <Card style={{ margin: 6, backgroundColor: "#fff" }}>
-      <Card.Content>
+    <Card style={{ margin: 10, backgroundColor: "#fff" }}>
+      <Card style={{ backgroundColor: "#fff" }}>
         <Shift shift={props.post.shift} />
-        <Text style={{ marginTop: 5, marginLeft: 5 }} variant="bodyLarge">
+        <Text style={{ margin: 10 }} variant="bodyLarge">
           {props.post.body}
         </Text>
-        {/* From postForm */}
+      </Card>
+      {/* From postForm */}
 
-        {/* {props.post.comments.map((item, i) => {
+      {/* {props.post.comments.map((item, i) => {
           <Card style={{ backgroundColor: "#fff", margin: 6 }}>
             <Card.Title
               title="Jeff Bing"
@@ -191,55 +192,61 @@ function Post(props) {
           </Card>;
         })} */}
 
-        <View
-          style={{
-            borderLeftWidth: 1,
-            marginLeft: 5,
-            borderColor: theme.colors.outline,
+      <View
+        style={{
+          borderLeftWidth: 1,
+          marginLeft: 20,
+          marginTop: 5,
+          borderColor: theme.colors.outline,
+        }}
+      >
+        <Card.Title
+          title="Swaps Offered"
+          titleVariant="titleSmall"
+          titleStyle={{
+            minHeight: 0,
+            marginBottom: 0,
           }}
-        >
-          <Card.Title
-            title="Swaps Offered"
-            titleVariant="titleLarge"
-            leftStyle={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: 5,
-            }}
-            left={() => <Icon size={28} source="calendar-multiple" />}
-          />
+          leftStyle={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginRight: 0,
+          }}
+          left={() => <Icon size={16} source="calendar-multiple" />}
+          style={{ minHeight: 40, paddingLeft: 2 }}
+        />
 
-          {bids.map((item, i) => {
-            let newShift = {
-              ...item.shift_bidded,
-              avatar_url: item.avatar_url,
-              owner_name: item.bidder_name,
-            };
-            return (
-              <View style={{ marginBottom: 10, marginLeft: 10 }}>
-                <Shift shift={newShift} />
-                <Text style={{ marginTop: 5, marginLeft: 5 }}>
-                  {formatDistanceToNow(new Date(item.created_at), {
-                    addSuffix: true,
-                  })}
-                </Text>
-              </View>
-            );
-          })}
-        </View>
-      </Card.Content>
+        {bids.map((item, i) => {
+          let newShift = {
+            ...item.shift_bidded,
+            avatar_url: item.avatar_url,
+            owner_name: item.bidder_name,
+          };
+          return (
+            <View style={{ marginBottom: 10, marginLeft: -20 }}>
+              <Shift shift={newShift} />
+              <Text style={{ marginTop: 5, marginLeft: 35 }}>
+                {formatDistanceToNow(new Date(item.created_at), {
+                  addSuffix: true,
+                })}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
 
       <Card.Actions>
-        <Button>Like</Button>
-        <Button>Comment</Button>
+        {/* <Button mode="contained-tonal">Like</Button> */}
+        <Button mode="contained-tonal">Comment</Button>
         <Button
+          mode="contained"
           onPress={() => {
             props.navigation.navigate("Offer Shift", {
               postId: props.post.id,
             });
           }}
         >
-          Offer
+          Offer Swap
         </Button>
       </Card.Actions>
     </Card>
