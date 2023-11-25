@@ -147,8 +147,6 @@ export const shiftSlice = createSlice({
       // you got the thing
       .addCase(fetchShiftsForMonthAsync.fulfilled, (state, action) => {
         return produce(state, (draftState) => {
-          console.log("in shift sliceeeeee");
-          console.log(action.payload);
           draftState.currentShifts = action.payload;
           draftState.status = Statuses.UpToDate;
         });
@@ -187,8 +185,6 @@ export const shiftSlice = createSlice({
       // you got the thing
       .addCase(destroyShiftAsync.fulfilled, (state, action) => {
         return produce(state, (draftState) => {
-          console.log("in shift sliceeeeee, we destroying and updaaaaating");
-
           draftState.status = Statuses.UpToDate;
         });
       })
@@ -207,7 +203,6 @@ export const shiftSlice = createSlice({
       // you got the thing
       .addCase(updateShiftAsync.fulfilled, (state, action) => {
         return produce(state, (draftState) => {
-          console.log("in shift sliceeeeee, updaaaaating shiftssss");
           draftState.status = Statuses.UpToDate;
         });
       })

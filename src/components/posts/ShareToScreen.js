@@ -262,8 +262,6 @@ function ShareToScreen({ route, navigation }) {
   function removeIdFromArray(idToRemove, idsArray) {
     // Use the filter method to create a new array without the specified ID
 
-    console.log("id to remove: " + idToRemove);
-
     let newArray = idsArray.filter((id) => id !== idToRemove);
 
     // Return the new array without the removed ID

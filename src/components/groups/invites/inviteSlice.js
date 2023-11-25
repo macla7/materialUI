@@ -190,8 +190,6 @@ export const inviteSlice = createSlice({
       })
       // you got the thing
       .addCase(createInviteAsync.fulfilled, (state, action) => {
-        console.log("action??");
-        console.log(action.payload);
         return produce(state, (draftState) => {
           draftState.toBeActioned = [];
           draftState.toBeConfirmed = [];

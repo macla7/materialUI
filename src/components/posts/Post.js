@@ -138,31 +138,6 @@ function Post(props) {
     personal: { key: "personal", color: "black" },
   };
 
-  const LeftContent = (source) => (
-    <Avatar.Image
-      source={() => (
-        <Image
-          source={{ uri: source }}
-          style={{
-            width: 30,
-            height: 30,
-          }} // Set the width and height of the image
-        />
-      )}
-      size={48}
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        shadowRadius: "5",
-        shadowColor: theme.colors.shadow,
-        shadowOffset: "1 1",
-        shadowOpacity: 0.1,
-        backgroundColor: "white",
-      }}
-    />
-  );
-
   return (
     <Card style={{ margin: 10, backgroundColor: "#fff" }}>
       <Card style={{ backgroundColor: "#fff" }}>
@@ -223,7 +198,7 @@ function Post(props) {
             owner_name: item.bidder_name,
           };
           return (
-            <View style={{ marginBottom: 10, marginLeft: -20 }}>
+            <View style={{ marginBottom: 10, marginLeft: -20 }} key={i}>
               <Shift shift={newShift} />
               <Text style={{ marginTop: 5, marginLeft: 35 }}>
                 {formatDistanceToNow(new Date(item.created_at), {

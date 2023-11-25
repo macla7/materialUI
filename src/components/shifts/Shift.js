@@ -53,30 +53,32 @@ function Shift({ shift }) {
     personal: { key: "personal", color: "black" },
   };
 
-  const LeftContent = (source) => (
-    <Avatar.Image
-      source={() => (
-        <Image
-          source={{ uri: source }}
-          style={{
-            width: 30,
-            height: 30,
-          }} // Set the width and height of the image
-        />
-      )}
-      size={48}
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        shadowRadius: "5",
-        shadowColor: theme.colors.shadow,
-        shadowOffset: "1 1",
-        shadowOpacity: 0.1,
-        backgroundColor: "white",
-      }}
-    />
-  );
+  const LeftContent = (source) => {
+    return (
+      <Avatar.Image
+        source={() => (
+          <Image
+            source={{ uri: source }}
+            style={{
+              width: 30,
+              height: 30,
+            }} // Set the width and height of the image
+          />
+        )}
+        size={48}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          shadowRadius: "5",
+          shadowColor: theme.colors.shadow,
+          shadowOffset: "1 1",
+          shadowOpacity: 0.1,
+          backgroundColor: "white",
+        }}
+      />
+    );
+  };
 
   return (
     <Card style={{ backgroundColor: getColor("container") }}>

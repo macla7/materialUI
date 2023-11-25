@@ -79,9 +79,6 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   }, [transformedShifts, transformedEvents]);
 
   useEffect(() => {
-    console.log("get here?");
-    console.log(agendaEvents);
-    console.log(agendaShifts);
     setMergedAgenda(mergeAndSortArrays(agendaEvents, agendaShifts));
   }, [agendaShifts, agendaEvents]);
 
@@ -140,12 +137,8 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   function transformEventArray(inputData) {
     const outputObject = {};
 
-    console.log("trannnnnns formmming");
-    console.log(inputData);
     inputData.forEach((item) => {
       const startDate = format(new Date(item.startDate), "yyyy-MM-dd");
-      console.log("start DAAAAAAAte is ");
-      console.log(startDate);
       let dots = [];
 
       if (item.title !== "") {
@@ -209,8 +202,6 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   }
 
   function sortArrayByTitle(array) {
-    console.log("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn sort");
-    console.log(array);
     const compareDates = (a, b) => {
       const dateA = new Date(a.title);
       const dateB = new Date(b.title);

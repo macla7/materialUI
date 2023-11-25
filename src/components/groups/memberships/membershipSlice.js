@@ -98,12 +98,9 @@ export const membershipSlice = createSlice({
       state.checkboxGroupState = action.payload;
     },
     createProspectiveMembershipsObjects: (state, action) => {
-      console.log("submitting membership objects");
-      console.log(action.payload.length);
       state.prospectiveMembershipsObjects = action.payload;
     },
     resetProspectiveMemberships: (state) => {
-      console.log("are we resting the prospective memberships objects?????");
       state.checkboxUserState = [];
       state.prospectiveMembershipsObjects = [];
       state.checkboxGroupState = [];

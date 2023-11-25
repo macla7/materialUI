@@ -41,13 +41,14 @@ export const initialShiftState = {
   position: "AM",
   start: Date.now(),
   end: Date.now(),
+  avatar_url: null,
 };
 
 export const initialBidState = {
   id: 0,
   post_id: 0,
   user_id: 0,
-  avatar_url: "",
+  avatar_url: null,
   created_at: Date.now(),
   shift_bidded: initialShiftState,
   shift_id: 0,

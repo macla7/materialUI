@@ -105,13 +105,8 @@ function ShiftForm({ navigation, route }) {
       status: 1,
     };
 
-    console.log("we even getting, what about here?");
-
     if (returnScreen == "Calendar") {
       // dispatch create shift!!
-      console.log("we even getting here?");
-      console.log("whats the poosition ");
-      console.log(position);
       const shiftForUpdate = {
         id: id,
         position: position,
@@ -120,7 +115,6 @@ function ShiftForm({ navigation, route }) {
         description: description,
         user_id: userId,
       };
-      console.log(shiftForUpdate);
       dispatch(updateShiftAsync(shiftForUpdate))
         .then(() => {
           // Assuming userId and formattedDate are correct, adjust as needed

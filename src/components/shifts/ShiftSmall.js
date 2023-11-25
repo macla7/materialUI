@@ -42,8 +42,6 @@ function ShiftSmall({ shift, navigation, offering, postId }) {
       id: shift.id,
     };
 
-    console.log("Trying to destroy the shift?", shiftDetails);
-    console.log(formattedDate);
     // Dispatch destroyShiftAsync and then dispatch fetchShiftsForMonthAsync if the destroy operation is successful
     dispatch(destroyShiftAsync(shiftDetails))
       .then(() => {
@@ -75,7 +73,6 @@ function ShiftSmall({ shift, navigation, offering, postId }) {
   }
 
   function offerToSwap() {
-    console.log("biiiii");
     setConfirmSwapVisible(true);
     // show modal to confirm offer to swap ...
   }
@@ -91,8 +88,6 @@ function ShiftSmall({ shift, navigation, offering, postId }) {
       approved: false,
       shift_id: shift.id,
     };
-    console.log("bid details are ...");
-    console.log(bidDetails);
     // create Bid
     dispatch(createBidAsync(bidDetails));
 

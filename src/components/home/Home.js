@@ -29,10 +29,7 @@ function Home({ navigation }) {
     refresh();
   }, []);
 
-  useEffect(() => {
-    console.log("home posts are!!!");
-    console.log(homePosts);
-  }, [homePosts]);
+  useEffect(() => {}, [homePosts]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -75,7 +72,8 @@ function Home({ navigation }) {
             "updated_at": "2023-11-13T04:25:40.373Z",
             "bid_id": null,
             "position": "AM",
-            "description": "RN ward E"
+            "description": "RN ward E",
+            "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBck1CIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--138ea1df8b223ff85a40c3146918b5570514c9cf/profilePictureUser421.jpg"
         },
         "likes": [
             {

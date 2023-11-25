@@ -34,7 +34,6 @@ export default function App() {
 
     setErrors({ ...errors, ...newErrors });
 
-    console.log("hello");
     if (areAllValuesNull(errors) && areAllValuesNull(newErrors)) {
       setPosted(true);
       return onSubmit();

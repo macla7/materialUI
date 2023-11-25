@@ -51,14 +51,6 @@ function PostForm({ route, navigation }) {
 
   const handlePress = () => setExpanded(!expanded);
 
-  console.log("prroooooooooo shift it");
-  console.log(proShifts);
-
-  useEffect(() => {
-    console.log("prooooo pppp shift it");
-    console.log(proShifts);
-  }, []);
-
   useEffect(() => {
     if (freshPost.id != 0) {
       let notification_blueprint = {
@@ -90,7 +82,6 @@ function PostForm({ route, navigation }) {
   };
 
   function submitPost() {
-    console.log("making POSTTTTTTTTT");
     let post = {
       body: reason,
       shift_attributes: proShifts,
