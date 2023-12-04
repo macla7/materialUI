@@ -116,7 +116,10 @@ function Profile({ navigation }) {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Profile!</Text>
+      <Text>Screen not yet implemented for MVP 2.0</Text>
       <Button
+        style={{ marginTop: 50 }}
+        mode="contained"
         onPress={() => {
           onLogout();
         }}

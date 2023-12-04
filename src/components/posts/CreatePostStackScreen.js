@@ -23,7 +23,7 @@ function CreatePostStackScreen({ navigation }) {
           reserve: 0,
         }}
         options={{
-          headerTransparent: true,
+          headerShown: false,
         }}
       />
       <CreatePostStack.Screen

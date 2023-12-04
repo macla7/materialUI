@@ -26,7 +26,7 @@ function Login({ navigation }) {
   const loginError = useSelector(selectLoginError);
   const [errors, setErrors] = useState({});
   const headerHeight = useHeaderHeight();
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const status = useSelector(selectStatus);
   const [throbbingValue] = useState(new Animated.Value(1));
 

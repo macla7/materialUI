@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Calendar from "./Calendar";
+import CalendarScreen from "./CalendarScreen";
 
 // import { Button, HStack, Text } from "native-base";
 
@@ -17,7 +17,7 @@ function CalendarStackScreen({ navigation }) {
     <CalendarStack.Navigator>
       <CalendarStack.Screen
         name="Calendar"
-        component={Calendar}
+        component={CalendarScreen}
         options={{
           headerShown: false,
         }}

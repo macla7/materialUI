@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 // import Posts from "../posts/Posts";
 import {
@@ -17,13 +17,14 @@ import {
   subHours,
 } from "date-fns";
 import { selectNewUser } from "../sessions/sessionSlice";
-import { View, Text, ScrollView } from "react-native";
-import { Appbar } from "react-native-paper";
+import { View, ScrollView } from "react-native";
+import { Appbar, Portal, Dialog, Text, Button } from "react-native-paper";
 
 function Home({ navigation }) {
   const homePosts = useSelector(selectHomePosts);
   const dispatch = useDispatch();
   const newUser = useSelector(selectNewUser);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     refresh();
@@ -52,77 +53,86 @@ function Home({ navigation }) {
   }
 
   const examplePost = JSON.parse(`{
-        "id": 0,
-        "body": "Got a friends birthday, could some please cover 🙏",
-        "user_id": 324,
-        "ends_at": "${formatISO(addDays(new Date(), 2))}",
+        "id": 16,
+        "body": "Got my Grandma’s birthday that day… someone please cover 🙏🥳",
+        "user_id": 1,
         "created_at": "${formatISO(subDays(new Date(), 1))}",
         "updated_at": "${formatISO(subDays(new Date(), 1))}",
-        "group_id": 1,
+        "group_id": 21,
         "hide": false,
         "solution": "swap",
-        "group_name": "Gotham General",
-        "postor_name": "Tess Georges",
-        "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBck1CIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--138ea1df8b223ff85a40c3146918b5570514c9cf/profilePictureUser421.jpg",
-        "shift": {
-            "id": 12,
-            "start": "2023-11-28T20:00:24.000Z",
-            "end": "2023-11-29T04:30:24.000Z",
-            "created_at": "2023-11-13T04:25:40.373Z",
-            "updated_at": "2023-11-13T04:25:40.373Z",
-            "bid_id": null,
-            "position": "AM",
-            "description": "RN ward E",
-            "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBck1CIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--138ea1df8b223ff85a40c3146918b5570514c9cf/profilePictureUser421.jpg"
-        },
-        "likes": [
-            {
-                "id": 27,
-                "post_id": 4,
-                "user_id": 402,
-                "created_at": "2023-07-15T08:32:44.012Z",
-                "updated_at": "2023-07-15T08:32:44.012Z"
-            }
-        ],
-        "comments": [
+        "shift_id": 127,
+        "group_name": null,
+        "postor_name": "Fred Smith",
+        "avatar_url": "http://192.168.0.71:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--1023a7bc9187c6febb76180e67ab6537b9db20e3/007-whale.png",
+        "post_admins": [
             {
                 "id": 1,
-                "post_id": 4,
-                "user_id": 1,
-                "body": "Would love too!",
-                "created_at": "${formatISO(subDays(new Date(), 2))}",
-                "updated_at": "${formatISO(subDays(new Date(), 2))}",
-                "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBckVCIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c2e88df50446700c2152f5f38f15ba4ba1801376/profilePictureUser420.jpg",
-                "commentor_name": "Fred Smith"
+                "email": "fred@bing.com",
+                "created_at": "2023-11-11T07:12:14.732Z",
+                "updated_at": "2023-11-11T08:08:30.083Z",
+                "role": "admin",
+                "name": "Fred Smith",
+                "uid": null,
+                "provider": null,
+                "email_confirmed": false,
+                "confirm_token": "6_-IwFk4BG1eqNCu-j7gQQ"
             }
         ],
+        "likes": [],
+        "shift": {
+            "id": 127,
+            "start": "${formatISO(
+              setSeconds(setMinutes(setHours(addDays(new Date(), 19), 9), 0), 0)
+            )}",
+            "end": "${formatISO(
+              setSeconds(
+                setMinutes(setHours(addDays(new Date(), 19), 15), 0),
+                0
+              )
+            )}",
+            "created_at": "${formatISO(subDays(new Date(), 2))}",
+            "updated_at": "${formatISO(subDays(new Date(), 2))}",
+            "position": "AM",
+            "description": "RN - Ward D",
+            "user_id": 1,
+            "status": "posting",
+            "owner_name": "Fred Smith",
+            "avatar_url": "http://192.168.0.71:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--1023a7bc9187c6febb76180e67ab6537b9db20e3/007-whale.png"
+        },
+        "comments": [],
         "bids": [
             {
-                "id": 16,
-                "post_id": 4,
-                "user_id": 402,
+                "id": 5,
+                "post_id": 16,
+                "user_id": 24,
                 "created_at": "${formatISO(subHours(new Date(), 2))}",
                 "updated_at": "${formatISO(subHours(new Date(), 2))}",
-                "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcTBCIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2e9f2a9b0046539f89ac6ee560ba1ad155a5643b/profilePictureUser418.jpg",
-                "bidder_name": "Bob Clark"
-            },
-            {
-                "id": 11,
-                "post_id": 4,
-                "user_id": 2,
-                "created_at": "${formatISO(subDays(new Date(), 1))}",
-                "updated_at": "${formatISO(subDays(new Date(), 1))}",
-                "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcThCIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e4a4a8d088c06790dc942d862602a44343f47a22/profilePictureUser419.jpg",
-                "bidder_name": "Amy Chen"
-            },
-            {
-                "id": 10,
-                "post_id": 4,
-                "user_id": 1,
-                "created_at": "${formatISO(subDays(new Date(), 2))}",
-                "updated_at": "${formatISO(subDays(new Date(), 2))}",
-                "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBckVCIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c2e88df50446700c2152f5f38f15ba4ba1801376/profilePictureUser420.jpg",
-                "bidder_name": "Fred Smith"
+                "approved": false,
+                "shift_id": 149,
+                "shift_bidded": {
+                    "id": 149,
+                     "start": "${formatISO(
+                       setSeconds(
+                         setMinutes(setHours(addDays(new Date(), 19), 9), 0),
+                         0
+                       )
+                     )}",
+                    "end": "${formatISO(
+                      setSeconds(
+                        setMinutes(setHours(addDays(new Date(), 19), 15), 0),
+                        0
+                      )
+                    )}",
+                    "created_at": "${formatISO(subDays(new Date(), 2))}",
+                    "updated_at": "${formatISO(subDays(new Date(), 2))}",
+                    "position": "PM",
+                    "description": "",
+                    "user_id": 24,
+                    "status": "no"
+                },
+                "avatar_url": "http://192.168.0.71:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--135397931e88819892a4785f081bbca13865da28/027-deer.png",
+                "bidder_name": "Laurel Schuppe"
             }
         ]
     }`);
@@ -134,11 +144,36 @@ function Home({ navigation }) {
         alignItems: "stretch",
       }}
     >
-      <Appbar.Header>
+      <Appbar.Header mode="small">
         <Appbar.Content title="Swaps" />
-        <Appbar.Action icon="information" />
-        <Appbar.Action icon="magnify" onPress={() => {}} />
+        <Appbar.Action
+          icon="information"
+          onPress={() => {
+            setVisible(true);
+          }}
+        />
+        <Appbar.Action
+          icon="magnify"
+          onPress={() => {
+            setVisible(true);
+          }}
+        />
       </Appbar.Header>
+
+      <Portal>
+        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+          <Dialog.Title>Alert</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              Button fucntionality not yet implemented for MVP 2.0
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(false)}>Close</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       <ScrollView>
         {homePosts.length > 0 ? (
           homePosts.map((item, i) => {
@@ -153,13 +188,24 @@ function Home({ navigation }) {
             );
           })
         ) : (
-          <Post
-            post={examplePost}
-            key={examplePost.id}
-            navigation={navigation}
-            singularView={false}
-            example={true}
-          />
+          <View>
+            <View
+              style={{
+                display: "flex",
+                marginTop: 5,
+                alignItems: "center",
+              }}
+            >
+              <Text>Example Post</Text>
+            </View>
+            <Post
+              post={examplePost}
+              key={examplePost.id}
+              navigation={navigation}
+              singularView={false}
+              example={true}
+            />
+          </View>
         )}
       </ScrollView>
     </View>

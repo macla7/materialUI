@@ -106,6 +106,7 @@ function Notifications({ navigation }) {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Notifications!</Text>
+      <Text>Screen not yet implemented for MVP 2.0</Text>
     </View>
   );
 }

@@ -5,13 +5,13 @@ import {
   ExpandableCalendar,
   AgendaList,
   CalendarProvider,
-  WeekCalendar,
+  Calendar as WixCalendar,
 } from "react-native-calendars";
 import AgendaItem from "./mocks/AgendaItem";
 import { getTheme, themeColor, lightThemeColor } from "./mocks/theme";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as Calendar from "expo-calendar";
-import { Appbar, Button } from "react-native-paper";
+import { Appbar, Button, Portal, Dialog, Text } from "react-native-paper";
 import AddShiftsToCalendar from "./AddShiftsToCalendar";
 import {
   formatISO,
@@ -24,7 +24,6 @@ import {
   endOfMonth,
 } from "date-fns";
 import {
-  fetchShiftsAsync,
   selectCurrentShifts,
   selectDate,
   setDate,
@@ -44,7 +43,7 @@ import { grandTheme } from "../../app/themeExtenders";
 // The shift in the DB should be heavily based off the Event data type
 // given back from the Expo Calendar package. As both will need to
 // populate the Agenda/Calendar related components.
-const ExpandableCalendarScreen = ({ navigation, weekView }) => {
+const CalendarScreen = ({ navigation }) => {
   const customCalendarTheme = useRef(getTheme());
   const dispatch = useDispatch();
   const userId = useSelector(selectUserId);
@@ -55,6 +54,7 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   const [agendaShifts, setAgendaShifts] = useState([]);
   const [mergedAgenda, setMergedAgenda] = useState([]);
   const [merged, setMerged] = useState({});
+  const [visible, setVisible] = useState(false);
 
   const [addingShifts, setAddingShifts] = useState(false);
   const todayBtnTheme = useRef({
@@ -117,6 +117,8 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   function transformArray(inputArray) {
     const outputObject = {};
 
+    console.log("trannnnnnnsforming object");
+
     inputArray.forEach((item) => {
       const startDate = formatISO(new Date(item.start), {
         representation: "date",
@@ -130,6 +132,9 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
         outputObject[startDate] = { dots: dots };
       }
     });
+
+    console.log("trannnnnnnsforming object isssss");
+    console.log(outputObject);
 
     return outputObject;
   }
@@ -154,6 +159,9 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   function mergeOutputObjects(obj1, obj2) {
     const mergedObject = { ...obj1 };
 
+    console.log("mergedObject is about to beee");
+    console.log(mergedObject);
+
     for (const key in obj2) {
       if (mergedObject[key]) {
         // If the key already exists, combine the 'dots' arrays
@@ -164,6 +172,9 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
         mergedObject[key] = { dots: obj2[key].dots };
       }
     }
+
+    console.log("mergedObject isssss");
+    console.log(mergedObject);
 
     return mergedObject;
   }
@@ -345,54 +356,72 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
         flexDirection: "column",
       }}
     >
-      <Appbar.Header>
+      <Appbar.Header mode="small">
         <Appbar.Content title="Your Calendar" />
+        <Appbar.Action icon="information" onPress={() => setVisible(true)} />
         <Appbar.Action
           icon="plus"
           onPress={() => {
             setAddingShifts(!addingShifts);
           }}
         />
-        <Appbar.Action icon="magnify" onPress={() => {}} />
-      </Appbar.Header>
-      {weekView ? (
-        <WeekCalendar testID="weekCalendar" firstDay={1} markedDates={merged} />
-      ) : (
-        <ExpandableCalendar
-          testID="expandableCalendar"
-          // horizontal={false}
-          // hideArrows
-          // disablePan
-          // hideKnob
-          initialPosition={ExpandableCalendar.positions.OPEN}
-          // headerStyle={styles.header} // for horizontal only
-          // disableWeekScroll
-          theme={{
-            ...customCalendarTheme.current,
-            // calendarBackground: "#fcfdf6",
+        <Appbar.Action
+          icon="magnify"
+          onPress={() => {
+            setVisible(true);
           }}
-          // disableAllTouchEventsForDisabledDays
-          firstDay={1}
-          markedDates={merged}
-          markingType={"multi-dot"}
-          // leftArrowImageSource={
-          //   <MaterialCommunityIcons
-          //     name="arrow-left"
-          //     color={"black"}
-          //     size={26}
-          //   />
-          // }
-          // rightArrowImageSource={
-          //   <MaterialCommunityIcons
-          //     name="arrow-right"
-          //     color={"black"}
-          //     size={26}
-          //   />
-          // }
-          // animateScroll
-          closeOnDayPress={false}
         />
-      )}
+      </Appbar.Header>
+
+      <Portal>
+        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+          <Dialog.Title>Alert</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              Button fucntionality not yet implemented for MVP 2.0
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(false)}>Close</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
+      <ExpandableCalendar
+        testID="expandableCalendar"
+        // horizontal={false}
+        // hideArrows
+        // disablePan
+        // hideKnob
+        initialPosition={ExpandableCalendar.positions.OPEN}
+        // headerStyle={styles.header} // for horizontal only
+        // disableWeekScroll
+        theme={{
+          ...customCalendarTheme.current,
+          // calendarBackground: "#fcfdf6",
+        }}
+        // disableAllTouchEventsForDisabledDays
+        firstDay={1}
+        markedDates={merged}
+        markingType={"multi-dot"}
+        // leftArrowImageSource={
+        //   <MaterialCommunityIcons
+        //     name="arrow-left"
+        //     color={"black"}
+        //     size={26}
+        //   />
+        // }
+        // rightArrowImageSource={
+        //   <MaterialCommunityIcons
+        //     name="arrow-right"
+        //     color={"black"}
+        //     size={26}
+        //   />
+        // }
+        // animateScroll
+        closeOnDayPress={false}
+      />
+
       {addingShifts ? (
         <View
           style={{
@@ -430,4 +459,4 @@ const ExpandableCalendarScreen = ({ navigation, weekView }) => {
   );
 };
 
-export default ExpandableCalendarScreen;
+export default CalendarScreen;

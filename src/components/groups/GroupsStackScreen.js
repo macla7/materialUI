@@ -27,16 +27,17 @@ function GroupsStackScreen() {
               size={26}
             />
           ),
-          headerTransparent: true,
+
+          headerShown: false,
         }}
       />
       {/* <GroupsStack.Screen name="Discover" component={DiscoverGroups} /> */}
       <GroupsStack.Screen
         name="Group"
         component={Group}
-        options={({ route, navigation }) => ({
-          title: route.params.group.name,
-        })}
+        options={{
+          headerShown: false,
+        }}
       />
       {/* <GroupsStack.Screen
         name="GroupInfo"

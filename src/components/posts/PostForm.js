@@ -21,6 +21,9 @@ import {
   HelperText,
   List,
   Snackbar,
+  Appbar,
+  Portal,
+  Dialog,
 } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { addDays, format } from "date-fns";
@@ -47,7 +50,8 @@ function PostForm({ route, navigation }) {
   const headerHeight = useHeaderHeight();
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(true);
-  const [visibleSnackbar, setVisibleSnackbar] = React.useState(false);
+  const [visibleSnackbar, setVisibleSnackbar] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const handlePress = () => setExpanded(!expanded);
 
@@ -168,7 +172,7 @@ function PostForm({ route, navigation }) {
       return (
         <Button
           icon="calendar"
-          mode="contained-tonal"
+          mode="contained"
           onPress={() => {
             const currentDate = new Date();
             navigation.navigate("Add Shift", {
@@ -176,7 +180,7 @@ function PostForm({ route, navigation }) {
             });
             // dispatch(resetProShifts());
           }}
-          style={{ marginTop: 15 }}
+          style={{ marginTop: 15, marginRight: 25, marginLeft: 25 }}
         >
           Create Shift
         </Button>
@@ -185,7 +189,7 @@ function PostForm({ route, navigation }) {
       return (
         <Button
           icon="account-group"
-          mode="contained-tonal"
+          mode="contained"
           onPress={() => {
             navigation.navigate("Share To", {});
           }}
@@ -198,7 +202,7 @@ function PostForm({ route, navigation }) {
       return (
         <>
           <Button
-            mode="contained-tonal"
+            mode="contained"
             onPress={() => {
               onSubmit();
             }}
@@ -243,19 +247,34 @@ function PostForm({ route, navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
+      <Appbar.Header mode="small">
+        <Appbar.Content title="Swaps" />
+        <Appbar.Action icon="information" onPress={() => setVisible(true)} />
+      </Appbar.Header>
+
+      <Portal>
+        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+          <Dialog.Title>Alert</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              Button fucntionality not yet implemented for MVP 2.0
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(false)}>Close</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> */}
       <View
         style={{
           paddingTop: headerHeight - 5,
           flex: 1,
+          paddingLeft: 15,
+          paddingRight: 15,
         }}
       >
-        <ScrollView
-          style={{
-            paddingLeft: 15,
-            paddingRight: 15,
-          }}
-        >
+        <ScrollView centerContent={true}>
           <TextInput
             label="Reason"
             multiline
