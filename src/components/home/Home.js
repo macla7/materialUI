@@ -64,7 +64,7 @@ function Home({ navigation }) {
         "shift_id": 127,
         "group_name": null,
         "postor_name": "Fred Smith",
-        "avatar_url": "http://192.168.0.71:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--1023a7bc9187c6febb76180e67ab6537b9db20e3/007-whale.png",
+        "avatar_url": "https://shiftmarket.s3.ap-southeast-2.amazonaws.com/jiyck5rk8pvu2y48dx9deuwl3l8r?response-content-disposition=inline%3B%20filename%3D%22005-dolphin.png%22%3B%20filename%2A%3DUTF-8%27%27005-dolphin.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3VVBARXQZTYMCP7%2F20231211%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20231211T025200Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=77502797970d504a004349a71475d4b71111c832f6e3ec95d651d89875e3df0c",
         "post_admins": [
             {
                 "id": 1,
@@ -98,7 +98,7 @@ function Home({ navigation }) {
             "user_id": 1,
             "status": "posting",
             "owner_name": "Fred Smith",
-            "avatar_url": "http://192.168.0.71:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--1023a7bc9187c6febb76180e67ab6537b9db20e3/007-whale.png"
+            "avatar_url": "https://shiftmarket.s3.ap-southeast-2.amazonaws.com/jiyck5rk8pvu2y48dx9deuwl3l8r?response-content-disposition=inline%3B%20filename%3D%22005-dolphin.png%22%3B%20filename%2A%3DUTF-8%27%27005-dolphin.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3VVBARXQZTYMCP7%2F20231211%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20231211T025200Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=77502797970d504a004349a71475d4b71111c832f6e3ec95d651d89875e3df0c"
         },
         "comments": [],
         "bids": [
@@ -131,7 +131,7 @@ function Home({ navigation }) {
                     "user_id": 24,
                     "status": "no"
                 },
-                "avatar_url": "http://192.168.0.71:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--135397931e88819892a4785f081bbca13865da28/027-deer.png",
+                "avatar_url": "https://shiftmarket.s3.ap-southeast-2.amazonaws.com/4prmoj3lxfuadjjrvqjojp7h023a?response-content-disposition=inline%3B%20filename%3D%22027-deer.png%22%3B%20filename%2A%3DUTF-8%27%27027-deer.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3VVBARXQZTYMCP7%2F20231211%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20231211T024920Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=ffbb8f6c536c0674982fa6d86fe6b9175ad0c8c0ff276a4f224aa7a7af4374b3",
                 "bidder_name": "Laurel Schuppe"
             }
         ]

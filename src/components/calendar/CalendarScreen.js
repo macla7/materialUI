@@ -101,13 +101,15 @@ const CalendarScreen = ({ navigation }) => {
         Calendar.EntityTypes.EVENT
       );
       const calendarIds = calendars.map((calendar) => calendar.id);
-      // const currentDate = new Date();
 
-      const calendarsEvents = await Calendar.getEventsAsync(
-        calendarIds,
-        startOfMonth(new Date(date)),
-        endOfMonth(new Date(date))
-      );
+      let calendarsEvents;
+      if (calendarIds.length > 0) {
+        calendarsEvents = await Calendar.getEventsAsync(
+          calendarIds,
+          startOfMonth(new Date(date)),
+          endOfMonth(new Date(date))
+        );
+      }
 
       setTransformedEvents(transformEventArray(calendarsEvents));
       setAgendaEvents(transformEventsToAgendaItems(calendarsEvents));
