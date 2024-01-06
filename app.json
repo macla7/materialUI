@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "material",
-    "slug": "material",
+    "name": "shift_pals",
+    "slug": "shift_pals",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#25292e"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "au.com.shiftpals"
@@ -23,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "au.com.shiftpals"
+      "package": "au.macla7.shiftpals"
     },
     "web": {
       "favicon": "./assets/favicon.png"
