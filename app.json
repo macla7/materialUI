@@ -1,30 +1,31 @@
 {
   "expo": {
-    "name": "shift_pals",
-    "slug": "shift_pals",
-    "version": "1.0.0",
+    "name": "Shift it",
+    "slug": "shift_it",
+    "version": "1.0.13",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/appImages/icon.png",
+    "scheme": "shift_it",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/appImages/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#25292e"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "au.com.shiftpals"
+      "bundleIdentifier": "au.com.shiftmarket"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/appImages/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "au.macla7.shiftpals"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "splash": {
+        "image": "./src/assets/appImages/splash.png",
+        "backgroundColor": "#4243ed"
+      },
+      "package": "com.macla7.shift_it"
     },
     "extra": {
       "eas": {
