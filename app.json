@@ -2,10 +2,9 @@
   "expo": {
     "name": "Shift it",
     "slug": "shift_it",
-    "version": "1.0.13",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/appImages/icon.png",
-    "scheme": "shift_it",
     "splash": {
       "image": "./assets/appImages/splash.png",
       "resizeMode": "contain",
@@ -14,22 +13,25 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "au.com.shiftmarket"
+      "bundleIdentifier": "au.com.shiftmarket",
+      "buildNumber": "23"
     },
     "android": {
+      "versionCode": 23,
+      "icon": "./assets/appImages/adaptive-icon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/appImages/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#4243ed"
       },
       "splash": {
-        "image": "./src/assets/appImages/splash.png",
+        "image": "./assets/appImages/splash.png",
         "backgroundColor": "#4243ed"
       },
       "package": "com.macla7.shift_it"
     },
     "extra": {
       "eas": {
-        "projectId": "17f087c6-17bd-4697-8d01-33800b2b7754"
+        "projectId": "65fafb0c-5e9e-4192-b638-62e2ef295637"
       }
     },
     "plugins": [
@@ -40,5 +42,12 @@
         }
       ]
     ]
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    }
   }
 }
