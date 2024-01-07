@@ -18,6 +18,7 @@ import {
 import { Text, TextInput, Checkbox, Button } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTheme } from "react-native-paper";
 
 function Login({ navigation }) {
   const dispatch = useDispatch();
@@ -29,27 +30,28 @@ function Login({ navigation }) {
   const [rememberMe, setRememberMe] = useState(true);
   const status = useSelector(selectStatus);
   const [throbbingValue] = useState(new Animated.Value(1));
+  const theme = useTheme();
 
-  // useEffect(() => {
-  //   startThrobAnimation();
-  // }, []);
+  useEffect(() => {
+    startThrobAnimation();
+  }, []);
 
-  // const startThrobAnimation = () => {
-  //   Animated.loop(
-  //     Animated.sequence([
-  //       Animated.timing(throbbingValue, {
-  //         toValue: 1.05,
-  //         duration: 500,
-  //         useNativeDriver: false,
-  //       }),
-  //       Animated.timing(throbbingValue, {
-  //         toValue: 1,
-  //         duration: 500,
-  //         useNativeDriver: false,
-  //       }),
-  //     ])
-  //   ).start();
-  // };
+  const startThrobAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(throbbingValue, {
+          toValue: 1.05,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(throbbingValue, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  };
 
   useEffect(() => {
     checkRememberMe();
@@ -124,8 +126,6 @@ function Login({ navigation }) {
             <Text variant="headlineLarge">Welcome</Text>
             <Text variant="titleSmall">Sign in to continue!</Text>
 
-            {/* <Text>{errors.loginError}</Text> */}
-
             <View
               style={{
                 marginTop: 10,
@@ -137,7 +137,7 @@ function Login({ navigation }) {
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  clearLoginError();
+                  dispatch(clearLoginError());
                 }}
               />
             </View>
@@ -154,7 +154,7 @@ function Login({ navigation }) {
                 secureTextEntry
                 onChangeText={(text) => {
                   setPassword(text);
-                  clearLoginError();
+                  dispatch(clearLoginError());
                 }}
               />
             </View>
@@ -173,6 +173,32 @@ function Login({ navigation }) {
                 onPress={() => setRememberMe(!rememberMe)}
                 status={rememberMe ? "checked" : "unchecked"}
               />
+            </View>
+
+            <View
+              style={{
+                marginTop: 10,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: theme.colors.error }}>
+                {errors.loginError}
+              </Text>
+              <Animated.Text
+                style={{
+                  transform: [{ scale: throbbingValue }],
+                  marginLeft: 10,
+                }}
+              >
+                <Text variant="labelLarge">
+                  {status != "Not Fetched" && status != "Up To Date"
+                    ? status
+                    : ""}
+                </Text>
+              </Animated.Text>
             </View>
 
             <Button
