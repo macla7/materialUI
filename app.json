@@ -14,10 +14,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "au.com.shiftmarket",
-      "buildNumber": "23"
+      "buildNumber": "24"
     },
     "android": {
-      "versionCode": 23,
+      "versionCode": 24,
       "icon": "./assets/appImages/adaptive-icon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/appImages/adaptive-icon.png",
