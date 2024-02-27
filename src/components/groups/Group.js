@@ -136,7 +136,7 @@ function Group({ route, navigation }) {
             <List.Item
               key={i}
               title={item.user.name}
-              description={item.role}
+              description={item.role == "admin" ? "admin" : ""}
               left={() => LeftContent(item.user.avatar_url)}
               right={() => RightContent()}
               onPress={() => {

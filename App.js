@@ -1,14 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import ReactDOM from "react-dom/client";
+import React from "react";
 import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  View,
-  Platform,
-  Text,
-  Button,
-  TextInput,
-} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import store from "./src/app/store";
@@ -33,32 +24,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#25292e",
-    alignItems: "center",
-  },
-  imageContainer: {
-    flex: 1,
-    paddingTop: 58,
-  },
-  image: {
-    width: 320,
-    height: 440,
-    borderRadius: 18,
-  },
-  footerContainer: {
-    flex: 1 / 3,
-    alignItems: "center",
-  },
-  optionsContainer: {
-    position: "absolute",
-    bottom: 80,
-  },
-  optionsRow: {
-    alignItems: "center",
-    flexDirection: "row",
-  },
-});

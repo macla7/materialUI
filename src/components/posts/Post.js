@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 // import Shift from "./shifts/Shift.js";
 import { createConsumer } from "@rails/actioncable";
 // import DP from "../layout/DP";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, intlFormatDistance } from "date-fns";
 // import ButtonGroup from "./ButtonGroup";
 // import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 // import { faClock } from "@fortawesome/free-regular-svg-icons/faClock.js";
@@ -18,8 +18,16 @@ import { domain } from "@env";
 import { selectUserId } from "../sessions/sessionSlice.js";
 // import { faEllipsis } from "@fortawesome/free-solid-svg-icons/faEllipsis";
 // import Likes from "./likes/Likes.js";
-import { Avatar, Button, Card, Text, Icon } from "react-native-paper";
-import { useTheme } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  Text,
+  Icon,
+  Portal,
+  Dialog,
+  useTheme,
+} from "react-native-paper";
 import { Image, View } from "react-native";
 import Shift from "../shifts/Shift";
 
@@ -35,6 +43,7 @@ function Post(props) {
   const [comments, setComments] = useState(props.post.comments);
   const userId = useSelector(selectUserId);
   const theme = useTheme();
+  const [visible, setVisible] = useState(false);
 
   const postsChannel = useMemo(() => {
     return consumer.subscriptions.create(
@@ -140,12 +149,30 @@ function Post(props) {
 
   return (
     <Card style={{ margin: 10, backgroundColor: "#fff" }}>
-      <Card style={{ backgroundColor: "#fff" }}>
-        <Shift shift={props.post.shift} />
-        <Text style={{ margin: 10 }} variant="bodyLarge">
-          {props.post.body}
-        </Text>
-      </Card>
+      <Portal>
+        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+          <Dialog.Title>Alert</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              Button fucntionality not yet implemented for MVP 2.0
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(false)}>Close</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
+      <Shift shift={props.post.shift} />
+      <Text style={{ marginTop: 5, marginLeft: 10 }}>
+        {formatDistanceToNow(new Date(props.post.created_at), {
+          addSuffix: false,
+        })}
+      </Text>
+      <Text style={{ margin: 10 }} variant="bodyLarge">
+        {props.post.body}
+      </Text>
+
       {/* From postForm */}
 
       {/* {props.post.comments.map((item, i) => {
@@ -169,8 +196,6 @@ function Post(props) {
 
       <View
         style={{
-          borderLeftWidth: 1,
-          marginLeft: 20,
           marginTop: 5,
           borderColor: theme.colors.outline,
         }}
@@ -188,7 +213,12 @@ function Post(props) {
             marginRight: 0,
           }}
           left={() => <Icon size={16} source="calendar-multiple" />}
-          style={{ minHeight: 40, paddingLeft: 2 }}
+          style={{
+            minHeight: 40,
+            paddingLeft: 2,
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.outlineVariant,
+          }}
         />
 
         {bids.map((item, i) => {
@@ -198,11 +228,11 @@ function Post(props) {
             owner_name: item.bidder_name,
           };
           return (
-            <View style={{ marginBottom: 10, marginLeft: -20 }} key={i}>
+            <View style={{ marginBottom: 10, paddingHorizontal: 10 }} key={i}>
               <Shift shift={newShift} />
-              <Text style={{ marginTop: 5, marginLeft: 35 }}>
+              <Text style={{ marginTop: 5, marginLeft: 10 }}>
                 {formatDistanceToNow(new Date(item.created_at), {
-                  addSuffix: true,
+                  addSuffix: false,
                 })}
               </Text>
             </View>
@@ -212,7 +242,14 @@ function Post(props) {
 
       <Card.Actions>
         {/* <Button mode="contained-tonal">Like</Button> */}
-        <Button mode="contained-tonal">Comment</Button>
+        <Button
+          mode="contained-tonal"
+          onPress={() => {
+            setVisible(true);
+          }}
+        >
+          Comment
+        </Button>
         <Button
           mode="contained"
           onPress={() => {

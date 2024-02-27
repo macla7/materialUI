@@ -64,7 +64,7 @@ function Home({ navigation }) {
         "shift_id": 127,
         "group_name": null,
         "postor_name": "Fred Smith",
-        "avatar_url": "https://shiftmarket.s3.ap-southeast-2.amazonaws.com/jiyck5rk8pvu2y48dx9deuwl3l8r?response-content-disposition=inline%3B%20filename%3D%22005-dolphin.png%22%3B%20filename%2A%3DUTF-8%27%27005-dolphin.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3VVBARXQZTYMCP7%2F20231211%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20231211T025200Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=77502797970d504a004349a71475d4b71111c832f6e3ec95d651d89875e3df0c",
+        "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBDdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--db48aef0974c1192c601d1087d331623e68f03c9/027-deer.png",
         "post_admins": [
             {
                 "id": 1,
@@ -98,7 +98,7 @@ function Home({ navigation }) {
             "user_id": 1,
             "status": "posting",
             "owner_name": "Fred Smith",
-            "avatar_url": "https://shiftmarket.s3.ap-southeast-2.amazonaws.com/jiyck5rk8pvu2y48dx9deuwl3l8r?response-content-disposition=inline%3B%20filename%3D%22005-dolphin.png%22%3B%20filename%2A%3DUTF-8%27%27005-dolphin.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3VVBARXQZTYMCP7%2F20231211%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20231211T025200Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=77502797970d504a004349a71475d4b71111c832f6e3ec95d651d89875e3df0c"
+            "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBDdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--db48aef0974c1192c601d1087d331623e68f03c9/027-deer.png"
         },
         "comments": [],
         "bids": [
@@ -131,8 +131,8 @@ function Home({ navigation }) {
                     "user_id": 24,
                     "status": "no"
                 },
-                "avatar_url": "https://shiftmarket.s3.ap-southeast-2.amazonaws.com/4prmoj3lxfuadjjrvqjojp7h023a?response-content-disposition=inline%3B%20filename%3D%22027-deer.png%22%3B%20filename%2A%3DUTF-8%27%27027-deer.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3VVBARXQZTYMCP7%2F20231211%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20231211T024920Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=ffbb8f6c536c0674982fa6d86fe6b9175ad0c8c0ff276a4f224aa7a7af4374b3",
-                "bidder_name": "Laurel Schuppe"
+                "avatar_url": "https://shiftmarket.herokuapp.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--f80e4966cd1e3353eb390bae633bdb16a0e1c616/046-chameleon.png",
+                "bidder_name": "Jessie Smith"
             }
         ]
     }`);

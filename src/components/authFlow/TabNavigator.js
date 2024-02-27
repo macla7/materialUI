@@ -19,7 +19,7 @@ import { createConsumer } from "@rails/actioncable";
 import { selectUserId } from "../sessions/sessionSlice.js";
 import { domain } from "@env";
 // import { AddIcon } from "native-base";
-
+import { useTheme } from "react-native-paper";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
@@ -60,6 +60,7 @@ function TabNavigator() {
   const dispatch = useDispatch();
   const userId = useSelector(selectUserId);
   const pushTokens = useSelector(selectPushTokens);
+  const theme = useTheme();
 
   // For now, we will just sub to notification channel when in component
   const notificationsChannel = useMemo(() => {
@@ -208,7 +209,13 @@ function TabNavigator() {
   };
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveBackgroundColor: "red",
+        tabBarActiveTintColor: "red",
+      }}
+      theme={theme}
+    >
       <Tab.Screen
         name="CalendarStack"
         component={CalendarStackScreen}
@@ -220,6 +227,7 @@ function TabNavigator() {
               size={26}
             />
           ),
+          tabBarActiveBackgroundColor: "red",
           title: "Calendar",
         }}
       />
